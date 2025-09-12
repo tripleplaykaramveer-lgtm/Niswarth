@@ -24,42 +24,43 @@ class MedicineSubcategoryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'medicine_id' => ['required','integer','exists:medicines,id'],
-            'title'        => ['required','string','max:255'],
-            'medicine_subcategory'           => ['required','array','min:1'],
-            'medicine_subcategory.*'         => ['required','string','max:255'],
-            'status'      => ['required', Rule::in(['0','1'])],
+            'medicine_id' => ['required', 'integer', 'exists:medicines,id'],
+            'title' => ['required', 'string', 'max:255'],
+            'medicine_subcategory' => ['required', 'array', 'min:1'],
+            'medicine_subcategory.*' => ['required', 'string', 'max:255'],
+            'short_order' => ['nullable', 'integer', 'min:1'], // ✅ new validation
+            'status' => ['required', Rule::in(['0', '1'])],
         ]);
 
-        $subs = collect($request->input('medicine_subcategory', []))->map(fn($v)=>trim($v))->filter()->unique()->values();
-
+        $subs = collect($request->input('medicine_subcategory', []))
+            ->map(fn($v) => trim($v))
+            ->filter()
+            ->unique()
+            ->values();
 
         try {
             DB::transaction(function () use ($request, $subs) {
-
-            foreach ($subs as $subName) {
-                $sub = MedicineSubcategory::firstOrCreate(
-                    [
-                        'medicine_id' => $request->medicine_id,
-                        'name'         => $subName,
-                    ],
-                    [
-                        'title'  => $request->title,
-                        'status' => $request->status,
-                    ]
-                );
-                
-            }
-        });
+                foreach ($subs as $subName) {
+                    MedicineSubcategory::firstOrCreate(
+                        [
+                            'medicine_id' => $request->medicine_id,
+                            'name' => $subName,
+                        ],
+                        [
+                            'title' => $request->title,
+                            'short_order' => $request->short_order, // ✅ save short_order
+                            'status' => $request->status,
+                        ]
+                    );
+                }
+            });
 
             return redirect()->route('medicinesubcategory.index')->with('success', 'Saved successfully!');
-
         } catch (\Throwable $e) {
-            return back()->withErrors(['error' => 'Save failed: '.$e->getMessage()]);
+            return back()->withErrors(['error' => 'Save failed: ' . $e->getMessage()]);
         }
-
-        
     }
+
 
     public function create()
     {
@@ -69,31 +70,31 @@ class MedicineSubcategoryController extends Controller
 
     public function edit(MedicineSubcategory $subcategory)
     {
-        $medicines = Medicine::pluck('title', 'id'); 
-        
+        $medicines = Medicine::pluck('title', 'id');
+
         return view('admin.medicinesubcotegory.edit', compact('subcategory', 'medicines'));
     }
 
     public function update(Request $request, MedicineSubcategory $subcategory)
     {
         $validated = $request->validate([
-            'medicine_id'          => ['required','integer','exists:medicines,id'],
-            'title'                 => ['required','string','max:255'],
-            'medicine_subcategory' => ['required','string','max:255'],
-            'status'                => ['required', Rule::in(['0','1'])],
+            'medicine_id' => ['required', 'integer', 'exists:medicines,id'],
+            'title' => ['required', 'string', 'max:255'],
+            'medicine_subcategory' => ['required', 'string', 'max:255'],
+            'short_order' => ['nullable', 'integer', 'min:0'], // ✅ new field validation
+            'status' => ['required', Rule::in(['0', '1'])],
         ]);
 
         $subName = trim($request->medicine_subcategory);
 
         try {
             DB::transaction(function () use ($request, $subName, $subcategory) {
-                
-                // 👉 Update current subcategory
                 $subcategory->update([
                     'medicine_id' => $request->medicine_id,
-                    'name'         => $subName,
-                    'title'        => $request->title,
-                    'status'       => $request->status,
+                    'name' => $subName,
+                    'title' => $request->title,
+                    'short_order' => $request->short_order ?? 0, // ✅ saving short_order
+                    'status' => $request->status,
                 ]);
             });
 
@@ -103,7 +104,8 @@ class MedicineSubcategoryController extends Controller
         }
     }
 
-     public function destroy(MedicineSubcategory $subcategory)
+
+    public function destroy(MedicineSubcategory $subcategory)
     {
         $subcategory->delete();
         return redirect()->route('medicinesubcategory.index')->with('success', 'Medicine Subcategory deleted successfully.');

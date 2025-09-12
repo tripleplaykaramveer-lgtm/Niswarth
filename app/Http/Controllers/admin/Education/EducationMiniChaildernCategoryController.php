@@ -21,40 +21,42 @@ class EducationMiniChaildernCategoryController extends Controller
         $educationminichailderncategorys = EducationMiniChaildernCategory::latest()->paginate(10);
         return view('admin.educationminichiderncotegory.index', compact('educationminichailderncategorys'));
     }
-     public function store(Request $request)
+    public function store(Request $request)
     {
-
         $validated = $request->validate([
-            'educationchailderncategory_id' => ['required','integer','exists:education_chailderncategorys,id'],
-            'education_minichidern_category'           => ['required','array','min:1'],
-            'education_minichidern_category.*'         => ['required','string','max:255'],
-            'status'      => ['required', Rule::in(['0','1'])],
+            'educationchailderncategory_id' => ['required', 'integer', 'exists:education_chailderncategorys,id'],
+            'education_minichidern_category' => ['required', 'array', 'min:1'],
+            'education_minichidern_category.*' => ['required', 'string', 'max:255'],
+            'short_order' => ['nullable', 'integer', 'min:1'], // ✅ new validation
+            'status' => ['required', Rule::in(['0', '1'])],
         ]);
 
-        $minichaildrens = collect($request->input('education_minichidern_category', []))->map(fn($v)=>trim($v))->filter()->unique()->values();
+        $minichaildrens = collect($request->input('education_minichidern_category', []))
+            ->map(fn($v) => trim($v))
+            ->filter()
+            ->unique()
+            ->values();
+
         try {
             DB::transaction(function () use ($request, $minichaildrens) {
-            foreach ($minichaildrens as $minichaildrenName) {
-
-                $minichaildren = EducationMiniChaildernCategory::firstOrCreate(
-                    [
-                        'educationchailderncategory_id' => $request->educationchailderncategory_id,
-                        'name'         => $minichaildrenName,
-                    ],
-                    [
-                        'status' => $request->status,
-                    ]
-                );
-
-            }
-        });
+                foreach ($minichaildrens as $minichaildrenName) {
+                    EducationMiniChaildernCategory::firstOrCreate(
+                        [
+                            'educationchailderncategory_id' => $request->educationchailderncategory_id,
+                            'name' => $minichaildrenName,
+                        ],
+                        [
+                            'short_order' => $request->short_order, // ✅ new field saved
+                            'status' => $request->status,
+                        ]
+                    );
+                }
+            });
 
             return redirect()->route('educationminichaildrencategory.index')->with('success', 'Saved successfully!');
-
         } catch (\Throwable $e) {
-            return back()->withErrors(['error' => 'Save failed: '.$e->getMessage()]);
+            return back()->withErrors(['error' => 'Save failed: ' . $e->getMessage()]);
         }
-
     }
 
     public function create()
@@ -73,21 +75,22 @@ class EducationMiniChaildernCategoryController extends Controller
 
     public function update(Request $request, EducationMiniChaildernCategory $minichaildrencategory)
     {
-
         $validated = $request->validate([
-            'educationchailderncategory_id'    => ['required','integer','exists:education_chailderncategorys,id'],
-            'education_minichidern_category' => ['required','string','max:255'],
-            'status'                     => ['required', Rule::in(['0','1'])],
+            'educationchailderncategory_id' => ['required', 'integer', 'exists:education_chailderncategorys,id'],
+            'education_minichidern_category' => ['required', 'string', 'max:255'],
+            'short_order' => ['nullable', 'integer', 'min:1'], // ✅ new validation
+            'status' => ['required', Rule::in(['0', '1'])],
         ]);
+
         $subName = trim($request->education_minichidern_category);
 
         try {
             DB::transaction(function () use ($request, $subName, $minichaildrencategory) {
-
                 $minichaildrencategory->update([
                     'educationchailderncategory_id' => $request->educationchailderncategory_id,
-                    'name'         => $subName,
-                    'status'       => $request->status,
+                    'name' => $subName,
+                    'short_order' => $request->short_order, // ✅ save new field
+                    'status' => $request->status,
                 ]);
             });
 
@@ -97,7 +100,8 @@ class EducationMiniChaildernCategoryController extends Controller
         }
     }
 
-     public function destroy(EducationMiniChaildernCategory $minichaildrencategory)
+
+    public function destroy(EducationMiniChaildernCategory $minichaildrencategory)
     {
         $chaildrencategory->delete();
         return redirect()->route('educationminichaildrencategory.index')->with('success', 'Education minichaildren categories deleted successfully.');

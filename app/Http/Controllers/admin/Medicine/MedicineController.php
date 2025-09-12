@@ -94,7 +94,7 @@ class MedicineController extends Controller
     public function getSubcategories($medicineId)
     {
         $subcategories = MedicineSubcategory::where('medicine_id', $medicineId)
-            ->where('status', '1')->orderBy('id', 'desc')
+            ->where('status', '1')->orderBy('short_order', 'asc')
             ->get(['id', 'title', 'name']);
         $stepTitle = $subcategories->first()->title ?? 'Select Subcategory';
         return response()->json([

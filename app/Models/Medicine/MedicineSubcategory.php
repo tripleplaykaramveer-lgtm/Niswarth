@@ -10,8 +10,8 @@ use App\Models\Medicine\MedicineChaildernCategory;
 class MedicineSubcategory extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $table="medicine_subcategorys";
-    
+    protected $table = "medicine_subcategorys";
+
     protected $casts = [
         'name' => 'array',
     ];
@@ -19,6 +19,7 @@ class MedicineSubcategory extends Model
         'medicine_id',
         'name',
         'title',
+        'short_order',
         'status',
     ];
 
@@ -27,8 +28,9 @@ class MedicineSubcategory extends Model
         return $this->belongsTo(Medicine::class, 'medicine_id', 'id');
     }
 
-    public function medicinechailderncategory(){
-        return $this->hasMany(MedicineChaildernCategory::class,'medicinesubcategory_id','id');
+    public function medicinechailderncategory()
+    {
+        return $this->hasMany(MedicineChaildernCategory::class, 'medicinesubcategory_id', 'id');
     }
 
     protected $dates = ['deleted_at'];
