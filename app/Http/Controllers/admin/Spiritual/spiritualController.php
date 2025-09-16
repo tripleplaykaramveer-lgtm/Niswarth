@@ -96,7 +96,7 @@ class SpiritualController extends Controller
     public function getSubcategories($spiritualId)
     {
         $subcategories = SpiritualSubcategory::where('spiritual_id', $spiritualId)
-            ->where('status', '1')->orderBy('id', 'desc')
+            ->where('status', '1')->orderBy('short_order', 'asc')
             ->get(['id', 'title', 'name']);
         $stepTitle = $subcategories->first()->title ?? 'Select Subcategory';
         return response()->json([
@@ -109,7 +109,7 @@ class SpiritualController extends Controller
     public function getChildren($subcategoryId)
     {
         $data = SpiritualChaildernCategory::where('spiritual_subcategory_id', $subcategoryId)
-            ->where('status', '1')->orderBy('id', 'desc')
+            ->where('status', '1')->orderBy('short_order', 'asc')
             ->get(['id', 'name']);
         return response()->json($data);
     }
@@ -118,7 +118,7 @@ class SpiritualController extends Controller
     public function getMiniChildren($childId)
     {
         $data = SpiritualMiniChaildernCategory::where('spiritual_chaildrencategory_id', $childId)
-            ->where('status', '1')->orderBy('id', 'desc')
+            ->where('status', '1')->orderBy('short_order', 'asc')
             ->get(['id', 'name']);
         return response()->json($data);
     }

@@ -103,7 +103,6 @@ class TreeController extends Controller
         ]);
     }
 
-    // Step 2: Children
     public function getChildren($treeinstallationId)
     {
         $data = EducationChaildernCategory::where('tree_installation_subcategory_id', $treeinstallationId)

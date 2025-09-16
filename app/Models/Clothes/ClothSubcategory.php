@@ -11,17 +11,19 @@ class ClothSubcategory extends Model
 {
     use HasFactory, SoftDeletes;
      protected $table="cloth_subcategorys";
-     
+
 
     protected $casts = [
         'name' => 'array',
     ];
-    protected $fillable = [
-        'cloth_id',
-        'name',
-        'title',
-        'status',
-    ];
+  protected $fillable = [
+    'cloth_id',
+    'name',
+    'title',
+    'status',
+    'short_order',
+];
+
 
     public function cloth()
     {

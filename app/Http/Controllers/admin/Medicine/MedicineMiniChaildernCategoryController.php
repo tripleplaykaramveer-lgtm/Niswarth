@@ -22,42 +22,45 @@ class MedicineMiniChaildernCategoryController extends Controller
         return view('admin.medicineminichiderncotegory.index', compact('medicineminichailderncategorys'));
     }
      public function store(Request $request)
-    {
-        
-        $validated = $request->validate([
-            'medicinechaildrencategory_id'   => ['required','integer','exists:medicine_chaildrencategorys,id'],
-            'minichidern_category'           => ['required','array','min:1'],
-            'minichidern_category.*'         => ['required','string','max:255'],
-            'title'                          => ['required','string','max:255'],
-            'status'                         => ['required', Rule::in(['0','1'])],
-        ]);
+{
+    $validated = $request->validate([
+        'medicinechaildrencategory_id' => ['required', 'integer', 'exists:medicine_chaildrencategorys,id'],
+        'minichidern_category' => ['required', 'array', 'min:1'],
+        'minichidern_category.*' => ['required', 'string', 'max:255'],
+        'title' => ['required', 'string', 'max:255'],
+        // Add validation for the new short_order field
+        'short_order' => ['nullable', 'integer', 'min:0'],
+        'status' => ['required', Rule::in(['0', '1'])],
+    ]);
 
-        $minichaildrens = collect($request->input('minichidern_category', []))->map(fn($v)=>trim($v))->filter()->unique()->values();
-        try {
-            DB::transaction(function () use ($request, $minichaildrens) {
+    $minichaildrens = collect($request->input('minichidern_category', []))
+        ->map(fn($v) => trim($v))
+        ->filter()
+        ->unique()
+        ->values();
+
+    try {
+        DB::transaction(function () use ($request, $minichaildrens) {
             foreach ($minichaildrens as $minichaildrenName) {
-
-                $minichaildren = MedicineMiniChaildernCategory::firstOrCreate(
+                MedicineMiniChaildernCategory::firstOrCreate(
                     [
                         'medicinechaildrencategory_id' => $request->medicinechaildrencategory_id,
-                        'name'         => $minichaildrenName,
+                        'name' => $minichaildrenName,
                     ],
                     [
                         'title' => $request->title,
+                        'short_order' => $request->short_order, // Add the short_order field
                         'status' => $request->status,
                     ]
                 );
-                
             }
         });
 
-            return redirect()->route('medicineminichaildrencategory.index')->with('success', 'Saved successfully!');
-
-        } catch (\Throwable $e) {
-            return back()->withErrors(['error' => 'Save failed: '.$e->getMessage()]);
-        }
-
+        return redirect()->route('medicineminichaildrencategory.index')->with('success', 'Saved successfully!');
+    } catch (\Throwable $e) {
+        return back()->withErrors(['error' => 'Save failed: ' . $e->getMessage()]);
     }
+}
 
     public function create()
     {
@@ -68,38 +71,40 @@ class MedicineMiniChaildernCategoryController extends Controller
     public function edit(MedicineMiniChaildernCategory $minichaildrencategory)
     {
 
-        $medicinechailderncategorys = MedicineChaildernCategory::pluck('name', 'id'); 
-        
+        $medicinechailderncategorys = MedicineChaildernCategory::pluck('name', 'id');
+
         return view('admin.medicineminichiderncotegory.edit', compact('minichaildrencategory', 'medicinechailderncategorys'));
     }
 
-    public function update(Request $request, MedicineMiniChaildernCategory $minichaildrencategory)
-    {
-       
-        $validated = $request->validate([
-            'medicinechaildrencategory_id'    => ['required','integer','exists:medicine_chaildrencategorys,id'],
-            'minichidern_category' => ['required','string','max:255'],
-            'title'                          => ['required','string','max:255'],
-            'status'                     => ['required', Rule::in(['0','1'])],
-        ]);
-        $subName = trim($request->minichidern_category);
+  public function update(Request $request, MedicineMiniChaildernCategory $minichaildrencategory)
+{
+    $validated = $request->validate([
+        'medicinechaildrencategory_id' => ['required', 'integer', 'exists:medicine_chaildrencategorys,id'],
+        'minichidern_category' => ['required', 'string', 'max:255'],
+        'title' => ['required', 'string', 'max:255'],
+        // Add validation for the new short_order field
+        'short_order' => ['nullable', 'integer', 'min:0'],
+        'status' => ['required', Rule::in(['0', '1'])],
+    ]);
 
-        try {
-            DB::transaction(function () use ($request, $subName, $minichaildrencategory) {
-                
-                $minichaildrencategory->update([
-                    'medicinechaildrencategory_id' => $request->medicinechaildrencategory_id,
-                    'name'         => $subName,
-                    'title'       => $request->title,
-                    'status'       => $request->status,
-                ]);
-            });
+    $subName = trim($request->minichidern_category);
 
-            return redirect()->route('medicineminichaildrencategory.index')->with('success', 'Updated successfully!');
-        } catch (\Throwable $e) {
-            return back()->withErrors(['error' => 'Update failed: ' . $e->getMessage()]);
-        }
+    try {
+        DB::transaction(function () use ($request, $subName, $minichaildrencategory) {
+            $minichaildrencategory->update([
+                'medicinechaildrencategory_id' => $request->medicinechaildrencategory_id,
+                'name' => $subName,
+                'title' => $request->title,
+                'short_order' => $request->short_order, // Add the short_order field
+                'status' => $request->status,
+            ]);
+        });
+
+        return redirect()->route('medicineminichaildrencategory.index')->with('success', 'Updated successfully!');
+    } catch (\Throwable $e) {
+        return back()->withErrors(['error' => 'Update failed: ' . $e->getMessage()]);
     }
+}
 
      public function destroy(MedicineMiniChaildernCategory $minichaildrencategory)
     {

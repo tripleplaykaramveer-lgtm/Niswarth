@@ -48,7 +48,7 @@ class TreeSubcategoryController extends Controller
                         'status' => $request->status,
                     ]
                 );
-                
+
             }
         });
 
@@ -58,7 +58,7 @@ class TreeSubcategoryController extends Controller
             return back()->withErrors(['error' => 'Save failed: '.$e->getMessage()]);
         }
 
-        
+
     }
 
 
@@ -70,14 +70,14 @@ class TreeSubcategoryController extends Controller
 
     public function edit(TreeinstallationSubcategory $subcategory)
     {
-        $treeinstallations = Treeinstallation::pluck('title', 'id'); 
-        
+        $treeinstallations = Treeinstallation::pluck('title', 'id');
+
         return view('admin.treeinstallationsubcategory.edit', compact('subcategory', 'treeinstallations'));
     }
 
     public function update(Request $request, TreeinstallationSubcategory $subcategory)
     {
-     
+
         $validated = $request->validate([
             'tree_installation_id'          => ['required','integer','exists:tree_installations,id'],
             'title'                 => ['required','string','max:255'],
@@ -89,7 +89,7 @@ class TreeSubcategoryController extends Controller
 
         try {
             DB::transaction(function () use ($request, $subName, $subcategory) {
-                
+
                 // 👉 Update current subcategory
                 $subcategory->update([
                     'tree_installation_id' => $request->tree_installation_id,

@@ -23,45 +23,46 @@ class SpiritualChaildernCategoryController extends Controller
     }
 
 
-     public function store(Request $request)
-    {
-        // dd($request->educationsubcategory_id);
+   public function store(Request $request)
+{
+    $validated = $request->validate([
+        'spiritual_subcategory_id'     => ['required','integer','exists:spiritual_subcategorys,id'],
+        'spiritual_chidern_category'   => ['required','array','min:1'],
+        'spiritual_chidern_category.*' => ['required','string','max:255'],
+        'title'                        => ['required','string','max:255'],
+        'status'                       => ['required', Rule::in(['0','1'])],
+        'short_order'                  => ['nullable','integer'], // ✅ new
+    ]);
 
-        $validated = $request->validate([
-            'spiritual_subcategory_id' => ['required','integer','exists:spiritual_subcategorys,id'],
-            'spiritual_chidern_category'           => ['required','array','min:1'],
-            'spiritual_chidern_category.*'         => ['required','string','max:255'],
-            'title'         => ['required','string','max:255'],
-            'status'      => ['required', Rule::in(['0','1'])],
-        ]);
+    $chaildrens = collect($request->input('spiritual_chidern_category', []))
+        ->map(fn($v) => trim($v))
+        ->filter()
+        ->unique()
+        ->values();
 
-        $chaildrens = collect($request->input('spiritual_chidern_category', []))->map(fn($v)=>trim($v))->filter()->unique()->values();
-
-        try {
-            DB::transaction(function () use ($request, $chaildrens) {
+    try {
+        DB::transaction(function () use ($request, $chaildrens) {
             foreach ($chaildrens as $chaildrenName) {
-
-                $chaildren = SpiritualChaildernCategory::firstOrCreate(
+                SpiritualChaildernCategory::firstOrCreate(
                     [
                         'spiritual_subcategory_id' => $request->spiritual_subcategory_id,
-                        'name'         => $chaildrenName,
+                        'name'                     => $chaildrenName,
                     ],
                     [
-                        'title' => $request->title,
-                        'status' => $request->status,
+                        'title'        => $request->title,
+                        'status'       => $request->status,
+                        'short_order'  => $request->short_order, // ✅ save
                     ]
                 );
-                
             }
         });
 
-            return redirect()->route('spiritualchaildrencategory.index')->with('success', 'Saved successfully!');
-
-        } catch (\Throwable $e) {
-            return back()->withErrors(['error' => 'Save failed: '.$e->getMessage()]);
-        }
-
+        return redirect()->route('spiritualchaildrencategory.index')
+                         ->with('success', 'Saved successfully!');
+    } catch (\Throwable $e) {
+        return back()->withErrors(['error' => 'Save failed: '.$e->getMessage()]);
     }
+}
 
 
     public function create()
@@ -73,38 +74,41 @@ class SpiritualChaildernCategoryController extends Controller
     public function edit(SpiritualChaildernCategory $chaildrencategory)
     {
 
-        $spiritualsubcategorys = SpiritualSubcategory::pluck('name', 'id'); 
-        
+        $spiritualsubcategorys = SpiritualSubcategory::pluck('name', 'id');
+
         return view('admin.spiritualchiderncategory.edit', compact('chaildrencategory', 'spiritualsubcategorys'));
     }
 
-    public function update(Request $request, SpiritualChaildernCategory $chaildrencategory)
-    {
-        $validated = $request->validate([
-            'spiritual_subcategory_id'    => ['required','integer','exists:spiritual_subcategorys,id'],
-            'spiritual_chidern_category' => ['required','string','max:255'],
-            'title' => ['required','string','max:255'],
-            'status'                     => ['required', Rule::in(['0','1'])],
-        ]);
+   public function update(Request $request, SpiritualChaildernCategory $chaildrencategory)
+{
+    $validated = $request->validate([
+        'spiritual_subcategory_id'    => ['required','integer','exists:spiritual_subcategorys,id'],
+        'spiritual_chidern_category'  => ['required','string','max:255'],
+        'title'                       => ['required','string','max:255'],
+        'status'                      => ['required', Rule::in(['0','1'])],
+        'short_order'                 => ['nullable','integer','min:0'],
+    ]);
 
-        $subName = trim($request->spiritual_chidern_category);
+    $subName = trim($request->spiritual_chidern_category);
 
-        try {
-            DB::transaction(function () use ($request, $subName, $chaildrencategory) {
-                
-                $chaildrencategory->update([
-                    'spiritual_subcategory_id' => $request->spiritual_subcategory_id,
-                    'name'         => $subName,
-                    'title'       => $request->title,
-                    'status'       => $request->status,
-                ]);
-            });
+    try {
+        DB::transaction(function () use ($request, $subName, $chaildrencategory) {
 
-            return redirect()->route('spiritualchaildrencategory.index')->with('success', 'Updated successfully!');
-        } catch (\Throwable $e) {
-            return back()->withErrors(['error' => 'Update failed: ' . $e->getMessage()]);
-        }
+            $chaildrencategory->update([
+                'spiritual_subcategory_id' => $request->spiritual_subcategory_id,
+                'name'                     => $subName,
+                'title'                    => $request->title,
+                'status'                   => $request->status,
+                'short_order'              => $request->short_order,
+            ]);
+        });
+
+        return redirect()->route('spiritualchaildrencategory.index')->with('success', 'Updated successfully!');
+    } catch (\Throwable $e) {
+        return back()->withErrors(['error' => 'Update failed: ' . $e->getMessage()]);
     }
+}
+
 
      public function destroy(SpiritualChaildernCategory $chaildrencategory)
     {

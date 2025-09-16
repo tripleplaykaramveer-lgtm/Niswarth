@@ -21,44 +21,47 @@ class ClothesSubcategoryController extends Controller
         return view('admin.clothessubcotegory.index', compact('clothesSubcategorys'));
     }
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'cloth_id' => ['required','integer','exists:clothes,id'],
-            'title'        => ['required','string','max:255'],
-            'cloth_subcategory'           => ['required','array','min:1'],
-            'cloth_subcategory.*'         => ['required','string','max:255'],
-            'status'      => ['required', Rule::in(['0','1'])],
-        ]);
+{
+    $validated = $request->validate([
+        'cloth_id'             => ['required', 'integer', 'exists:clothes,id'],
+        'title'                 => ['required', 'string', 'max:255'],
+        'cloth_subcategory'     => ['required', 'array', 'min:1'],
+        'cloth_subcategory.*'   => ['required', 'string', 'max:255'],
+        'status'                => ['required', Rule::in(['0', '1'])],
+        'short_order'           => ['nullable', 'integer', 'min:0'],
+    ]);
 
-        $subs = collect($request->input('cloth_subcategory', []))->map(fn($v)=>trim($v))->filter()->unique()->values();
+    $subs = collect($request->input('cloth_subcategory', []))
+        ->map(fn($v) => trim($v))
+        ->filter()
+        ->unique()
+        ->values();
 
-
-        try {
-            DB::transaction(function () use ($request, $subs) {
-
+    try {
+        DB::transaction(function () use ($request, $subs) {
             foreach ($subs as $subName) {
-                $sub = ClothSubcategory::firstOrCreate(
+                ClothSubcategory::firstOrCreate(
                     [
                         'cloth_id' => $request->cloth_id,
-                        'name'         => $subName,
+                        'name'     => $subName,
                     ],
                     [
-                        'title'  => $request->title,
-                        'status' => $request->status,
+                        'title'        => $request->title,
+                        'status'       => $request->status,
+                        'short_order'  => $request->short_order ?? 0,
                     ]
                 );
-                
             }
         });
 
-            return redirect()->route('clothessubcotegory.index')->with('success', 'Saved successfully!');
+        return redirect()
+            ->route('clothessubcotegory.index')
+            ->with('success', 'Saved successfully!');
 
-        } catch (\Throwable $e) {
-            return back()->withErrors(['error' => 'Save failed: '.$e->getMessage()]);
-        }
-
-        
+    } catch (\Throwable $e) {
+        return back()->withErrors(['error' => 'Save failed: ' . $e->getMessage()]);
     }
+}
 
     public function create()
     {
@@ -68,40 +71,39 @@ class ClothesSubcategoryController extends Controller
 
     public function edit(ClothSubcategory $subcategory)
     {
-        $clothes = Cloth::pluck('title', 'id'); 
-        
+        $clothes = Cloth::pluck('title', 'id');
+
         return view('admin.clothessubcotegory.edit', compact('subcategory', 'clothes'));
     }
 
-    public function update(Request $request, ClothSubcategory $subcategory)
-    {
-        // dd($request);
-        $validated = $request->validate([
-            'cloth_id'          => ['required','integer','exists:clothes,id'],
-            'title'                 => ['required','string','max:255'],
-            'cloth_subcategory' => ['required','string','max:255'],
-            'status'                => ['required', Rule::in(['0','1'])],
-        ]);
+  public function update(Request $request, ClothSubcategory $subcategory)
+{
+    $validated = $request->validate([
+        'cloth_id'           => ['required', 'integer', 'exists:clothes,id'],
+        'title'               => ['required', 'string', 'max:255'],
+        'cloth_subcategory'   => ['required', 'string', 'max:255'],
+        'status'               => ['required', Rule::in(['0','1'])],
+        'short_order'          => ['nullable','integer','min:0'],
+    ]);
 
-        $subName = trim($request->cloth_subcategory);
+    $subName = trim($request->cloth_subcategory);
 
-        try {
-            DB::transaction(function () use ($request, $subName, $subcategory) {
-                
-                // 👉 Update current subcategory
-                $subcategory->update([
-                    'cloth_id' => $request->cloth_id,
-                    'name'         => $subName,
-                    'title'        => $request->title,
-                    'status'       => $request->status,
-                ]);
-            });
+    try {
+        DB::transaction(function () use ($request, $subName, $subcategory) {
+            $subcategory->update([
+                'cloth_id'     => $request->cloth_id,
+                'name'         => $subName,
+                'title'        => $request->title,
+                'status'       => $request->status,
+                'short_order'  => $request->short_order ?? 0,
+            ]);
+        });
 
-            return redirect()->route('clothessubcategory.index')->with('success', 'Updated successfully!');
-        } catch (\Throwable $e) {
-            return back()->withErrors(['error' => 'Update failed: ' . $e->getMessage()]);
-        }
+        return redirect()->route('clothessubcategory.index')->with('success', 'Updated successfully!');
+    } catch (\Throwable $e) {
+        return back()->withErrors(['error' => 'Update failed: ' . $e->getMessage()]);
     }
+}
 
      public function destroy(ClothSubcategory $subcategory)
     {

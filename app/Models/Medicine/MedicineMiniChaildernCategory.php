@@ -18,6 +18,7 @@ class MedicineMiniChaildernCategory extends Model
         'medicinechaildrencategory_id',
         'name',
         'title',
+        'short_order',
         'status',
     ];
 

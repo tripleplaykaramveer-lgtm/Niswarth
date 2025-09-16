@@ -11,17 +11,18 @@ class SpiritualSubcategory extends Model
 {
     use HasFactory, SoftDeletes;
      protected $table="spiritual_subcategorys";
-     
 
     protected $casts = [
         'name' => 'array',
     ];
     protected $fillable = [
-        'spiritual_id',
-        'name',
-        'title',
-        'status',
-    ];
+    'spiritual_id',
+    'name',
+    'title',
+    'status',
+    'short_order',
+];
+
 
     public function spiritual()
     {

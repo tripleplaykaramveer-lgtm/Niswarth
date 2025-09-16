@@ -27,51 +27,54 @@ class ClothesChaildernCategoryController extends Controller
         return view('admin.clotheschiderncotegory.create', compact('clothsubcategorys'));
     }
 
-     public function store(Request $request)
-    {
+   public function store(Request $request)
+{
+    $validated = $request->validate([
+        'id'          => ['required','integer','exists:cloth_subcategorys,id'],
+        'name'        => ['required','array','min:1'],
+        'name.*'      => ['required','string','max:255'],
+        'title'       => ['required','string','max:255'],
+        'status'      => ['required', Rule::in(['0','1'])],
+        'short_order' => ['nullable','integer','min:0'],
+    ]);
 
-        $validated = $request->validate([
-            'id'        => ['required','integer','exists:cloth_subcategorys,id'],
-            'name'      => ['required','array','min:1'],
-            'name.*'    => ['required','string','max:255'],
-            'title'     => ['required','string','max:255'],
-            'status'    => ['required', Rule::in(['0','1'])],
-        ]);
-        
-        $chaildrens = collect($request->input('name', []))->map(fn($v)=>trim($v))->filter()->unique()->values();
+    $chaildrens = collect($request->input('name', []))
+        ->map(fn($v) => trim($v))
+        ->filter()
+        ->unique()
+        ->values();
 
-        try {
-            DB::transaction(function () use ($request, $chaildrens) {
+    try {
+        DB::transaction(function () use ($request, $chaildrens) {
             foreach ($chaildrens as $chaildrenName) {
-
-                $chaildren = ClothChaildernCategory::firstOrCreate(
+                ClothChaildernCategory::firstOrCreate(
                     [
                         'cloth_subcategory_id' => $request->id,
-                        'name'         => $chaildrenName,
+                        'name' => $chaildrenName,
                     ],
                     [
-                        'title' => $request->title,
-                        'status' => $request->status,
+                        'title'       => $request->title,
+                        'status'      => $request->status,
+                        'short_order' => $request->short_order,
                     ]
                 );
-                
             }
         });
 
-            return redirect()->route('clotheschiderncotegory.index')->with('success', 'Saved successfully!');
-
-        } catch (\Throwable $e) {
-            return back()->withErrors(['error' => 'Save failed: '.$e->getMessage()]);
-        }
-
+        return redirect()
+            ->route('clotheschaildrencategory.index')
+            ->with('success', 'Saved successfully!');
+    } catch (\Throwable $e) {
+        return back()->withErrors(['error' => 'Save failed: '.$e->getMessage()]);
     }
+}
 
-   
+
 
     public function edit(ClothChaildernCategory $chaildrencategory)
     {
-        $clothsubcategorys = ClothSubcategory::pluck('name', 'id'); 
-        
+        $clothsubcategorys = ClothSubcategory::pluck('name', 'id');
+
         return view('admin.clotheschiderncotegory.edit', compact('chaildrencategory', 'clothsubcategorys'));
     }
 
@@ -88,7 +91,7 @@ class ClothesChaildernCategoryController extends Controller
         $subName = trim($request->name);
         try {
             DB::transaction(function () use ($request, $subName, $chaildrencategory) {
-                
+
                 $chaildrencategory->update([
                     'cloth_subcategory_id' => $request->id,
                     'name'                 => $subName,

@@ -190,7 +190,10 @@
                                     <div class="item-desc">
                                         <h3>{{ $item->title }}</h3>
                                         <p>{{ $item->description }}</p>
-                                        <button class="card-button btn btn-primary">
+
+                                        <button class="card-button btn btn-primary stepper-btn"
+                                            data-id="{{ $item->id }}" data-context="foodWaters" data-bs-toggle="modal"
+                                            data-bs-target="#detailModal">
                                             {{ $item->button_text ?? 'Donate Now' }}
                                         </button>
                                     </div>

@@ -22,42 +22,46 @@ class SpiritualMiniChaildernCategoryController extends Controller
         $spiritualminichailderncategorys = SpiritualMiniChaildernCategory::latest()->paginate(10);
         return view('admin.spiritualminichiderncategory.index', compact('spiritualminichailderncategorys'));
     }
-     public function store(Request $request)
-    {
-        
-        $validated = $request->validate([
-            'spiritual_chaildrencategory_id' => ['required','integer','exists:spiritual_chailderncategorys,id'],
-            'spiritual_minichidern_category'           => ['required','array','min:1'],
-            'spiritual_minichidern_category.*'         => ['required','string','max:255'],
-            'status'      => ['required', Rule::in(['0','1'])],
-        ]);
+    public function store(Request $request)
+{
+    $validated = $request->validate([
+        'spiritual_chaildrencategory_id'   => ['required','integer','exists:spiritual_chailderncategorys,id'],
+        'spiritual_minichidern_category'   => ['required','array','min:1'],
+        'spiritual_minichidern_category.*' => ['required','string','max:255'],
+        'title'                            => ['required','string','max:255'],
+        'status'                           => ['required', Rule::in(['0','1'])],
+        'short_order'                      => ['nullable','integer','min:0'],
+    ]);
 
-        $minichaildrens = collect($request->input('spiritual_minichidern_category', []))->map(fn($v)=>trim($v))->filter()->unique()->values();
-        try {
-            DB::transaction(function () use ($request, $minichaildrens) {
+    $minichaildrens = collect($request->input('spiritual_minichidern_category', []))
+                        ->map(fn($v)=>trim($v))->filter()->unique()->values();
+
+    try {
+        DB::transaction(function () use ($request, $minichaildrens) {
             foreach ($minichaildrens as $minichaildrenName) {
 
-                $minichaildren = SpiritualMiniChaildernCategory::firstOrCreate(
+                SpiritualMiniChaildernCategory::firstOrCreate(
                     [
                         'spiritual_chaildrencategory_id' => $request->spiritual_chaildrencategory_id,
-                        'name'         => $minichaildrenName,
+                        'name' => $minichaildrenName,
                     ],
                     [
-                        'title' => $request->title,
-                        'status' => $request->status,
+                        'title'       => $request->title,
+                        'status'      => $request->status,
+                        'short_order' => $request->short_order,
                     ]
                 );
-                
+
             }
         });
 
-            return redirect()->route('spiritualminichaildrencategory.index')->with('success', 'Saved successfully!');
+        return redirect()->route('spiritualminichaildrencategory.index')->with('success', 'Saved successfully!');
 
-        } catch (\Throwable $e) {
-            return back()->withErrors(['error' => 'Save failed: '.$e->getMessage()]);
-        }
-
+    } catch (\Throwable $e) {
+        return back()->withErrors(['error' => 'Save failed: '.$e->getMessage()]);
     }
+}
+
 
     public function create()
     {
@@ -68,14 +72,14 @@ class SpiritualMiniChaildernCategoryController extends Controller
     public function edit(SpiritualMiniChaildernCategory $minichaildrencategory)
     {
 
-        $spiritualchailderncategorys = SpiritualChaildernCategory::pluck('name', 'id'); 
-        
+        $spiritualchailderncategorys = SpiritualChaildernCategory::pluck('name', 'id');
+
         return view('admin.spiritualminichiderncategory.edit', compact('minichaildrencategory', 'spiritualchailderncategorys'));
     }
 
     public function update(Request $request, SpiritualMiniChaildernCategory $minichaildrencategory)
     {
-       
+
         $validated = $request->validate([
             'spiritual_chaildrencategory_id'    => ['required','integer','exists:spiritual_chailderncategorys,id'],
             'spiritual_minichidern_category' => ['required','string','max:255'],
@@ -85,7 +89,7 @@ class SpiritualMiniChaildernCategoryController extends Controller
 
         try {
             DB::transaction(function () use ($request, $subName, $minichaildrencategory) {
-                
+
                 $minichaildrencategory->update([
                     'spiritual_chaildrencategory_id' => $request->spiritual_chaildrencategory_id,
                     'name'         => $subName,

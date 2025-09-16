@@ -22,46 +22,50 @@ class SpiritualSubcategoryController extends Controller
         $spiritualSubcategorys = SpiritualSubcategory::latest()->paginate(10); // using correct model
         return view('admin.spiritualsubcategory.index', compact('spiritualSubcategorys'));
     }
-    public function store(Request $request)
-    {
-        //  dd($request);
-        $validated = $request->validate([
-            'spiritual_id' => ['required','integer','exists:spirituals,id'],
-            'title'        => ['required','string','max:255'],
-            'spiritual_subcategory'           => ['required','array','min:1'],
-            'spiritual_subcategory.*'         => ['required','string','max:255'],
-            'status'      => ['required', Rule::in(['0','1'])],
-        ]);
 
-        $subs = collect($request->input('spiritual_subcategory', []))->map(fn($v)=>trim($v))->filter()->unique()->values();
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'spiritual_id' => ['required','integer','exists:spirituals,id'],
+        'title'        => ['required','string','max:255'],
+        'spiritual_subcategory' => ['required','array','min:1'],
+        'spiritual_subcategory.*' => ['required','string','max:255'],
+        'status'       => ['required', Rule::in(['0','1'])],
+        'short_order'  => ['nullable','integer'],  // ✅ New validation rule
+    ]);
 
+    // Clean up and ensure unique subcategory names
+    $subs = collect($request->input('spiritual_subcategory', []))
+        ->map(fn($v) => trim($v))
+        ->filter()
+        ->unique()
+        ->values();
 
-        try {
-            DB::transaction(function () use ($request, $subs) {
-
+    try {
+        DB::transaction(function () use ($request, $subs) {
             foreach ($subs as $subName) {
-                $sub = SpiritualSubcategory::firstOrCreate(
+                SpiritualSubcategory::firstOrCreate(
                     [
                         'spiritual_id' => $request->spiritual_id,
                         'name'         => $subName,
                     ],
                     [
-                        'title'  => $request->title,
-                        'status' => $request->status,
+                        'title'        => $request->title,
+                        'status'       => $request->status,
+                        'short_order'  => $request->short_order, // ✅ Save short_order
                     ]
                 );
-                
             }
         });
 
-            return redirect()->route('spiritualsubcategory.index')->with('success', 'Saved successfully!');
+        return redirect()
+            ->route('spiritualsubcategory.index')
+            ->with('success', 'Saved successfully!');
 
-        } catch (\Throwable $e) {
-            return back()->withErrors(['error' => 'Save failed: '.$e->getMessage()]);
-        }
-
-        
+    } catch (\Throwable $e) {
+        return back()->withErrors(['error' => 'Save failed: '.$e->getMessage()]);
     }
+}
 
     public function create()
     {
@@ -71,39 +75,44 @@ class SpiritualSubcategoryController extends Controller
 
     public function edit(spiritualSubcategory $subcategory)
     {
-        $spirituals = Spiritual::pluck('title', 'id'); 
-        
+        $spirituals = Spiritual::pluck('title', 'id');
+
         return view('admin.spiritualsubcategory.edit', compact('subcategory', 'spirituals'));
     }
 
     public function update(Request $request, SpiritualSubcategory $subcategory)
-    {
-        $validated = $request->validate([
-            'spiritual_id'          => ['required','integer','exists:spirituals,id'],
-            'title'                 => ['required','string','max:255'],
-            'spiritual_subcategory' => ['required','string','max:255'],
-            'status'                => ['required', Rule::in(['0','1'])],
-        ]);
+{
+    $validated = $request->validate([
+        'spiritual_id'          => ['required','integer','exists:spirituals,id'],
+        'title'                 => ['required','string','max:255'],
+        'spiritual_subcategory' => ['required','string','max:255'],
+        'status'                => ['required', Rule::in(['0','1'])],
+        'short_order'           => ['nullable','integer'], // ✅ New validation
+    ]);
 
-        $subName = trim($request->spiritual_subcategory);
+    $subName = trim($request->spiritual_subcategory);
 
-        try {
-            DB::transaction(function () use ($request, $subName, $subcategory) {
-                
-                // 👉 Update current subcategory
-                $subcategory->update([
-                    'spiritual_id' => $request->spiritual_id,
-                    'name'         => $subName,
-                    'title'        => $request->title,
-                    'status'       => $request->status,
-                ]);
-            });
+    try {
+        DB::transaction(function () use ($request, $subName, $subcategory) {
 
-            return redirect()->route('spiritualsubcategory.index')->with('success', 'Updated successfully!');
-        } catch (\Throwable $e) {
-            return back()->withErrors(['error' => 'Update failed: ' . $e->getMessage()]);
-        }
+            // 👉 Update current subcategory
+            $subcategory->update([
+                'spiritual_id' => $request->spiritual_id,
+                'name'         => $subName,
+                'title'        => $request->title,
+                'status'       => $request->status,
+                'short_order'  => $request->short_order,  // ✅ Save short_order
+            ]);
+        });
+
+        return redirect()
+            ->route('spiritualsubcategory.index')
+            ->with('success', 'Updated successfully!');
+    } catch (\Throwable $e) {
+        return back()->withErrors(['error' => 'Update failed: ' . $e->getMessage()]);
     }
+}
+
 
      public function destroy(SpiritualSubcategory $subcategory)
     {

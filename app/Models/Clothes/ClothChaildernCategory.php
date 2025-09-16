@@ -19,6 +19,7 @@ class ClothChaildernCategory extends Model
         'name',
         'title',
         'status',
+        'short_order',
     ];
 
     public function clothsubcategory()

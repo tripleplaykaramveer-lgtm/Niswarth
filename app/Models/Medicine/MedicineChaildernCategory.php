@@ -19,6 +19,7 @@ class MedicineChaildernCategory extends Model
         'name',
         'status',
         'title',
+        'short_order'
     ];
 
     public function medicinesubcategory()

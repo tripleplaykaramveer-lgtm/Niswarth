@@ -14,12 +14,14 @@ class ClothMiniChaildernCategory extends Model
      protected $casts = [
         'name' => 'array',
     ];
-    protected $fillable = [
-        'cloth_chailderncategory_id',
-        'name',
-        'title',
-        'status',
-    ];
+   protected $fillable = [
+    'cloth_chailderncategory_id',
+    'name',
+    'title',
+    'status',
+    'short_order',
+];
+
 
     public function clothchailderncategory()
     {

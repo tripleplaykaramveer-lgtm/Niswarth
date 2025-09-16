@@ -11,7 +11,7 @@ class TreeinstallationSubcategory extends Model
 {
     use HasFactory, SoftDeletes;
      protected $table="tree_installation_subcategorys";
-     
+
 
     protected $casts = [
         'name' => 'array',

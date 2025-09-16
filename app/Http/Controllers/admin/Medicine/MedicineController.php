@@ -107,7 +107,7 @@ class MedicineController extends Controller
     public function getChildren($subcategoryId)
     {
         $data = MedicineChaildernCategory::where('medicinesubcategory_id', $subcategoryId)
-            ->where('status', '1')->orderBy('id', 'desc')
+            ->where('status', '1')->orderBy('short_order', 'asc')
             ->get(['id', 'name']);
         return response()->json($data);
     }
@@ -116,7 +116,7 @@ class MedicineController extends Controller
     public function getMiniChildren($childId)
     {
         $data = MedicineMiniChaildernCategory::where('medicinechaildrencategory_id', $childId)
-            ->where('status', '1')->orderBy('id', 'desc')
+            ->where('status', '1')->orderBy('short_order', 'asc')
             ->get(['id', 'name']);
         return response()->json($data);
     }

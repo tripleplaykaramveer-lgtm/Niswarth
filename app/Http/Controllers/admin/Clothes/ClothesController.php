@@ -94,7 +94,7 @@ class ClothesController extends Controller
     public function getSubcategories($clothesId)
     {
         $subcategories = ClothSubcategory::where('cloth_id', $clothesId)
-            ->where('status', '1')->orderBy('id', 'desc')
+            ->where('status', '1')->orderBy('short_order', 'asc')
             ->get(['id', 'title', 'name']);
         $stepTitle = $subcategories->first()->title ?? 'Select Subcategory';
         return response()->json([
@@ -107,7 +107,7 @@ class ClothesController extends Controller
     public function getChildren($subcategoryId)
     {
         $data = ClothChaildernCategory::where('cloth_subcategory_id', $subcategoryId)
-            ->where('status', '1')->orderBy('id', 'desc')
+            ->where('status', '1')->orderBy('short_order', 'asc')
             ->get(['id', 'name']);
         return response()->json($data);
     }
@@ -116,7 +116,7 @@ class ClothesController extends Controller
     public function getMiniChildren($childId)
     {
         $data = ClothMiniChaildernCategory::where('cloth_chailderncategory_id', $childId)
-            ->where('status', '1')->orderBy('id', 'desc')
+            ->where('status', '1')->orderBy('short_order', 'asc')
             ->get(['id', 'name']);
         return response()->json($data);
     }
@@ -127,7 +127,10 @@ class ClothesController extends Controller
         $steps = [];
 
         // Step 1: Subcategory
-        $subcategories = ClothSubcategory::where('cloth_id', $clothesId)->count();
+   $subcategories = ClothSubcategory::where('cloth_id', $clothesId)
+    ->orderBy('short_order', 'asc')
+    ->get();
+
         if ($subcategories > 0) {
             $steps[] = [
                 "step" => count($steps) + 1,

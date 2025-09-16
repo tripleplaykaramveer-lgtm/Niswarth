@@ -18,12 +18,14 @@ class SpiritualChaildernCategory extends Model
         'name' => 'array',
     ];
 
-    protected $fillable = [
-        'spiritual_subcategory_id',
-        'name',
-        'title',
-        'status',
-    ];
+  protected $fillable = [
+    'spiritual_subcategory_id',
+    'name',
+    'title',
+    'status',
+    'short_order',   // ✅ added
+];
+
 
     public function spiritualsubcategory()
     {
