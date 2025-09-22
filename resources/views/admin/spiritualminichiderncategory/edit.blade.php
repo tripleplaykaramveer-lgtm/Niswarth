@@ -46,7 +46,7 @@
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
-                        
+
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Name</label>
                                 <input type="text" class="form-control" value="{{ $minichaildrencategory->name }}" name="spiritual_minichidern_category" placeholder="Enter name" required>
@@ -57,7 +57,7 @@
 
                             <div class="col-md-6">
                                 <label for="status" class="form-label">Status</label>
-                              
+
                                 <select class="form-select" id="status" name="status">
                                   <option value="">Select</option>
                                   <option value="1" {{ old('status' , $minichaildrencategory->status) == '1' ? 'selected' : '' }}>Active</option>
@@ -67,7 +67,7 @@
                                     <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
-            
+
                             <div class="col-12">
                                 <button type="submit" class="btn btn-light px-5">Submit</button>
                             </div>

@@ -35,6 +35,7 @@ class spiritualController extends Controller
             'title' => 'required',
             'description' => 'required',
             'button_text' => 'nullable',
+            'short_order' => 'required|integer',
         ]);
 
         $path = $request->file('image')->store('spiritual', 'public');
@@ -44,10 +45,10 @@ class spiritualController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'button_text' => $request->button_text,
+            'short_order' => $request->short_order,
         ]);
 
         return redirect()->route('spiritual.index')->with('success', 'Spiritual created successfully.');
-
     }
     public function edit(Spiritual $education)
     {

@@ -14,13 +14,13 @@ class SpiritualMiniChaildernCategory extends Model
      protected $casts = [
         'name' => 'array',
     ];
-  protected $fillable = [
-    'spiritual_chaildrencategory_id',
-    'name',
-    'title',
-    'status',
-    'short_order'
-];
+    protected $fillable = [
+        'spiritual_chaildrencategory_id',
+        'name',
+        'title',
+        'status',
+        'short_order'
+    ];
 
 
     public function spiritualchailderncategory()

@@ -23,44 +23,44 @@ class SpiritualMiniChaildernCategoryController extends Controller
         return view('admin.spiritualminichiderncategory.index', compact('spiritualminichailderncategorys'));
     }
     public function store(Request $request)
-{
-    $validated = $request->validate([
-        'spiritual_chaildrencategory_id'   => ['required','integer','exists:spiritual_chailderncategorys,id'],
-        'spiritual_minichidern_category'   => ['required','array','min:1'],
-        'spiritual_minichidern_category.*' => ['required','string','max:255'],
-        'title'                            => ['required','string','max:255'],
-        'status'                           => ['required', Rule::in(['0','1'])],
-        'short_order'                      => ['nullable','integer','min:0'],
-    ]);
+    {
+        $validated = $request->validate([
+            'spiritual_chaildrencategory_id'   => ['required','integer','exists:spiritual_chailderncategorys,id'],
+            'spiritual_minichidern_category'   => ['required','array','min:1'],
+            'spiritual_minichidern_category.*' => ['required','string','max:255'],
+            'title'                            => ['required','string','max:255'],
+            'status'                           => ['required', Rule::in(['0','1'])],
+            'short_order'                      => ['nullable','integer','min:0'],
+        ]);
 
-    $minichaildrens = collect($request->input('spiritual_minichidern_category', []))
-                        ->map(fn($v)=>trim($v))->filter()->unique()->values();
+        $minichaildrens = collect($request->input('spiritual_minichidern_category', []))
+                            ->map(fn($v)=>trim($v))->filter()->unique()->values();
 
-    try {
-        DB::transaction(function () use ($request, $minichaildrens) {
-            foreach ($minichaildrens as $minichaildrenName) {
+        try {
+            DB::transaction(function () use ($request, $minichaildrens) {
+                foreach ($minichaildrens as $minichaildrenName) {
 
-                SpiritualMiniChaildernCategory::firstOrCreate(
-                    [
-                        'spiritual_chaildrencategory_id' => $request->spiritual_chaildrencategory_id,
-                        'name' => $minichaildrenName,
-                    ],
-                    [
-                        'title'       => $request->title,
-                        'status'      => $request->status,
-                        'short_order' => $request->short_order,
-                    ]
-                );
+                    SpiritualMiniChaildernCategory::firstOrCreate(
+                        [
+                            'spiritual_chaildrencategory_id' => $request->spiritual_chaildrencategory_id,
+                            'name' => $minichaildrenName,
+                        ],
+                        [
+                            'title'       => $request->title,
+                            'status'      => $request->status,
+                            'short_order' => $request->short_order,
+                        ]
+                    );
 
-            }
-        });
+                }
+            });
 
-        return redirect()->route('spiritualminichaildrencategory.index')->with('success', 'Saved successfully!');
+            return redirect()->route('spiritualminichaildrencategory.index')->with('success', 'Saved successfully!');
 
-    } catch (\Throwable $e) {
-        return back()->withErrors(['error' => 'Save failed: '.$e->getMessage()]);
+        } catch (\Throwable $e) {
+            return back()->withErrors(['error' => 'Save failed: '.$e->getMessage()]);
+        }
     }
-}
 
 
     public function create()
