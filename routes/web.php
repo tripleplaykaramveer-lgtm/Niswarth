@@ -12,7 +12,7 @@ use App\Http\Controllers\admin\Medicine\MedicineController;
 use App\Http\Controllers\admin\Medicine\MedicineSubcategoryController;
 use App\Http\Controllers\admin\Medicine\MedicineChaildernCategoryController;
 use App\Http\Controllers\admin\Medicine\MedicineMiniChaildernCategoryController;
-use App\Http\Controllers\admin\Spiritual\SpiritualController;
+use App\Http\Controllers\admin\Spiritual\spiritualController;
 use App\Http\Controllers\admin\Spiritual\SpiritualSubcategoryController;
 use App\Http\Controllers\admin\Spiritual\SpiritualChaildernCategoryController;
 use App\Http\Controllers\admin\Spiritual\SpiritualMiniChaildernCategoryController;
