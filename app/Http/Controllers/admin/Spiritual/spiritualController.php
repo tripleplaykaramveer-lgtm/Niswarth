@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class SpiritualController extends Controller
+class spiritualController extends Controller
 {
     public function index()
     {
