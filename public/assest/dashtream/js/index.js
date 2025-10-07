@@ -17,7 +17,7 @@ $(function() {
 						  target: 'origin',
 						  above: 'rgb(255 255 255 / 100%)',   // Area will be red above the origin
 						  below: 'rgb(255 255 255 / 100%)'   // And blue below the origin
-						}, 
+						},
 					  tension: 0.4,
 					  borderColor: [
 						  '#fff'
@@ -74,12 +74,12 @@ $(function() {
 					  color: "rgba(221, 221, 221, 0.08)"
 					}
               },
-			  
+
             }
 			  }
 		  });
-		
-	
+
+
 
 // chart2
 var ctx = document.getElementById('chart2').getContext('2d');
@@ -106,15 +106,15 @@ var myChart = new Chart(ctx, {
           display: false,
       }
   }
-      
+
   }
 });
 
 
 
-		
-	// easy pie chart 
-	
+
+	// easy pie chart
+
 	 $('.easy-dash-chart1').easyPieChart({
 		easing: 'easeOutBounce',
 		barColor : '#fff',
@@ -124,7 +124,7 @@ var myChart = new Chart(ctx, {
 		onStep: function(from, to, percent) {
 			$(this.el).find('.w_percent').text(Math.round(percent));
 		}
-	 });	
+	 });
 
 
 	 $('.easy-dash-chart2').easyPieChart({
@@ -149,9 +149,9 @@ var myChart = new Chart(ctx, {
 			$(this.el).find('.w_percent').text(Math.round(percent));
 		}
 	 });
-		
-		
-	 
+
+
+
 // world map
 jQuery('#dashboard-map').vectorMap(
 {
@@ -182,7 +182,7 @@ jQuery('#dashboard-map').vectorMap(
     markers : [{
         latLng : [21.00, 78.00],
         name : 'Lorem Ipsum Dollar'
-      
+
       }],
     hoverOpacity: null,
     normalizeFunction: 'linear',
@@ -191,8 +191,8 @@ jQuery('#dashboard-map').vectorMap(
     selectedRegions: [],
     showTooltip: true,
 });
-		
-		
+
+
    $("#trendchart1").sparkline([5,8,7,10,9,10,8,6,4,6,8,7,6,8,9,10,8], {
       type: 'bar',
       height: '20',
@@ -201,7 +201,7 @@ jQuery('#dashboard-map').vectorMap(
       barSpacing: '3',
       barColor: '#fff'
     });
-		
+
 
 	$("#trendchart2").sparkline([5,8,7,10,9,10,8,6,4,6,8,7,6,8,9,10,8], {
       type: 'bar',
@@ -230,7 +230,7 @@ jQuery('#dashboard-map').vectorMap(
       resize: true,
       barSpacing: '3',
       barColor: '#fff'
-    });	
+    });
 
 
      $("#trendchart5").sparkline([5,8,7,10,9,10,8,6,4,6,8,7,6,8,9,10,8], {
@@ -240,13 +240,13 @@ jQuery('#dashboard-map').vectorMap(
       resize: true,
       barSpacing: '3',
       barColor: '#fff'
-    });	
+    });
 
 
 
 	// chart 3
      var ctx = document.getElementById('chart3').getContext('2d');
-              
+
        var myChart = new Chart(ctx, {
         type: 'line',
 		data: {
@@ -296,7 +296,7 @@ jQuery('#dashboard-map').vectorMap(
 			  }
 		}
 
-    
+
       });
 
 
@@ -304,7 +304,7 @@ jQuery('#dashboard-map').vectorMap(
 
       // chart 4
      var ctx = document.getElementById('chart4').getContext('2d');
-              
+
 	 var myChart = new Chart(ctx, {
 	  type: 'line',
 	  data: {
@@ -317,8 +317,8 @@ jQuery('#dashboard-map').vectorMap(
 			  ],
 			    /*  fill: {
 			  target: 'origin',
-			 	  above: 'rgb(255 255 255 / 12%)',   
-			 	  below: 'rgb(255 255 255 / 12%)'   
+			 	  above: 'rgb(255 255 255 / 12%)',
+			 	  below: 'rgb(255 255 255 / 12%)'
 			 	}, */
 			  tension: 0.4,
 			  borderColor: [
@@ -354,11 +354,11 @@ jQuery('#dashboard-map').vectorMap(
 			}
 	  }
 
-  
+
 	});
 
 
-	  
+
     // chart 5
 	var ctx = document.getElementById("chart5").getContext('2d');
 	var myChart = new Chart(ctx, {
@@ -418,9 +418,8 @@ jQuery('#dashboard-map').vectorMap(
 
 
 	});
-	
-	
-		
-		
-   });	 
-   
+
+
+
+
+   });

@@ -124,7 +124,7 @@
                                             data-id="{{ $education->id }}" data-context="education" data-bs-toggle="modal"
                                             data-bs-target="#detailModal">
                                             {{ $education->button_text ?? 'Donate Now' }}
-                                        </button>
+                                        </  button>
                                     </div>
                                 </div>
                             </div>

@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&amp;display=swap" rel="stylesheet">
 <link href="{{ asset('assest/dashtream/css/app.css') }}" rel="stylesheet">
 <link href="{{ asset('assest/dashtream/css/icons.css') }}" rel="stylesheet">
-
+<link href="https://cdn.jsdelivr.net/npm/metismenujs/dist/metismenujs.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
 
 </head>
@@ -55,7 +55,13 @@
 <script src="{{ asset('assest/dashtream/plugins/jquery-knob/excanvas.js') }}"></script>
 <script src="{{ asset('assest/dashtream/plugins/jquery-knob/jquery.knob.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/metismenujs/dist/metismenujs.min.js"></script>
 <script src="{{ asset('assest/dashtream/plugins/select2/js/select2-custom.js')}}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        new MetisMenu("#menu");
+    });
+</script>
 
 <script>
     $(function() {

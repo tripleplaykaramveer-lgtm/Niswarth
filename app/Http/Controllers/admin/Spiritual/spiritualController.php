@@ -1,23 +1,25 @@
 <?php
 
-namespace App\Http\Controllers\admin\Spiritual;
+namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Spiritual\Spiritual;
-use App\Models\Spiritual\SpiritualSubcategory;
-use App\Models\Spiritual\SpiritualChaildernCategory;
-use App\Models\Spiritual\SpiritualMiniChaildernCategory;
-use App\Helper\Helper;
+use App\Models\Spiritual;
+use App\Models\Lead;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
+
 class spiritualController extends Controller
 {
+    //
+
+
     public function index()
     {
-        $spirituals = Spiritual::latest()->paginate(10);
-        return view('admin.spiritual.index', compact('spirituals'));
+        $educations = Spiritual::latest()->paginate(10); // Add pagination if needed
+        return view('admin.spiritual.index', compact('educations'));
     }
 
     public function create()
@@ -29,25 +31,31 @@ class spiritualController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'image' => 'required|image',
+            'image' => 'required',
             'title' => 'required',
             'description' => 'required',
             'button_text' => 'nullable',
+            'short_order' => 'required|integer',
         ]);
 
-        $imagePath = Helper::saveFile($request->file('image'), 'spiritual');
+        $path = $request->file('image')->store('spiritual', 'public');
 
         Spiritual::create([
-            'image' => $imagePath,
+            'image' => $path,
             'title' => $request->title,
             'description' => $request->description,
             'button_text' => $request->button_text,
+            'short_order' => $request->short_order,
         ]);
 
         return redirect()->route('spiritual.index')->with('success', 'Spiritual created successfully.');
     }
+    public function edit(Spiritual $education)
+    {
+        return view('admin.spiritual.edit', compact('education'));
+    }
 
-    public function update(Request $request, Spiritual $spiritual)
+    public function update(Request $request, Spiritual $education)
     {
         $request->validate([
             'title' => 'required',
@@ -56,120 +64,25 @@ class spiritualController extends Controller
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // Prepare data for update
-        $data = [
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('spiritual', 'public');
+            $education->image = $path;
+        }
+
+        $education->update([
             'title' => $request->title,
             'description' => $request->description,
             'button_text' => $request->button_text,
-        ];
-
-        // Handle image upload if provided
-        if ($request->file('image')) {
-            // Delete old image if exists
-            Helper::deleteFile($spiritual->image);
-
-            // Save new image using your helper function
-            $data['image'] = Helper::saveFile($request->file('image'), 'spiritual');
-        }
-
-        // Update the spiritual record
-        $spiritual->update($data);
+            'image' => $education->image,
+        ]);
 
         return redirect()->route('spiritual.index')->with('success', 'Spiritual updated successfully.');
     }
 
-    public function edit(Spiritual $spiritual)
-    {
-        return view('admin.spiritual.edit', compact('spiritual'));
-    }
-
-
-    public function destroy(Spiritual $spiritual)
+public function destroy(Spiritual $education)
     {
         $education->delete();
-        return redirect()->route('education.index')->with('success', 'Spiritual deleted successfully.');
-    }
-
-    // frontend index page
-
-    // Step 1: Subcategories
-    public function getSubcategories($spiritualId)
-    {
-        $subcategories = SpiritualSubcategory::where('spiritual_id', $spiritualId)
-            ->where('status', '1')->orderBy('short_order', 'asc')
-            ->get(['id', 'title', 'name']);
-        $stepTitle = $subcategories->first()->title ?? 'Select Subcategory';
-        return response()->json([
-            'stepTitle' => $stepTitle,
-            'data' => $subcategories
-        ]);
-    }
-
-    // Step 2: Children
-    public function getChildren($subcategoryId)
-    {
-        $data = SpiritualChaildernCategory::where('spiritual_subcategory_id', $subcategoryId)
-            ->where('status', '1')->orderBy('short_order', 'asc')
-            ->get(['id', 'name']);
-        return response()->json($data);
-    }
-
-    // Step 3: Mini Children
-    public function getMiniChildren($childId)
-    {
-        $data = SpiritualMiniChaildernCategory::where('spiritual_chaildrencategory_id', $childId)
-            ->where('status', '1')->orderBy('short_order', 'asc')
-            ->get(['id', 'name']);
-        return response()->json($data);
-    }
-
-
-    public function getStepFlow($spiritualId)
-    {
-        $steps = [];
-
-        // Step 1: Subcategory
-        $subcategories = SpiritualSubcategory::where('spiritual_id', $spiritualId)->count();
-        if ($subcategories > 0) {
-            $steps[] = [
-                "step" => count($steps) + 1,
-                "title" => "Subcategory",
-                "endpoint" => "/spiritual-subcategories/ID"
-            ];
-        }
-
-        // Step 2: Children Category
-        $children = SpiritualChaildernCategory::whereHas('subcategory', function ($q) use ($spiritualId) {
-            $q->where('spiritual_id', $spiritualId);
-        })->count();
-        if ($children > 0) {
-            $steps[] = [
-                "step" => count($steps) + 1,
-                "title" => "Children Category",
-                "endpoint" => "/spiritual-children/ID"
-            ];
-        }
-
-        // Step 3: Mini Children
-        $mini = SpiritualMiniChaildernCategory::whereHas('chaildrenCategory.subcategory', function ($q) use ($spiritualId) {
-            $q->where('spiritual_id', $spiritualId);
-        })->count();
-        if ($mini > 0) {
-            $steps[] = [
-                "step" => count($steps) + 1,
-                "title" => "Mini Children",
-                "endpoint" => "/spiritual-minichildren/ID"
-            ];
-        }
-
-        // Last Step: Donate (Always)
-        $steps[] = [
-            "step" => count($steps) + 1,
-            "title" => "Donate",
-            "endpoint" => ""
-        ];
-
-        return response()->json($steps);
+        return redirect()->route('spiritual.index')->with('success', 'Spiritual deleted successfully.');
     }
 
 }

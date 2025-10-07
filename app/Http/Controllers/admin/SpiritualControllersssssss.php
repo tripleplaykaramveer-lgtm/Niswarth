@@ -13,12 +13,10 @@ use Illuminate\Support\Facades\DB;
 
 class spiritualController extends Controller
 {
-    //
-
 
     public function index()
     {
-        $educations = Spiritual::latest()->paginate(10); // Add pagination if needed
+        $educations = Spiritual::latest()->paginate(10);
         return view('admin.spiritual.index', compact('educations'));
     }
 
@@ -79,7 +77,7 @@ class spiritualController extends Controller
         return redirect()->route('spiritual.index')->with('success', 'Spiritual updated successfully.');
     }
 
-public function destroy(Spiritual $education)
+    public function destroy(Spiritual $education)
     {
         $education->delete();
         return redirect()->route('spiritual.index')->with('success', 'Spiritual deleted successfully.');

@@ -4,17 +4,23 @@ $(document).on("click", ".stepper-btn", function () {
 
     $("#modalBodyContent").html("<p>Loading...</p>");
 
-    $.get(`/${context}-subcategories/${id}`, function (res) {
-        $("#modalBodyContent").empty();
+    $.ajax({
+        url: `/${context}-subcategories/${id}`,
+        type: "GET",
+        dataType: "json",   // 🔑 force JSON parsing
+        success: function (res) {
+            $("#modalBodyContent").empty();
 
-        if (Array.isArray(res.data) && res.data.length > 0) {
-            renderStep(1, res.stepTitle, res.data, "subcategory", context);
-        } else {
-            $("#modalBodyContent").append("<div><p>No subcategories available.</p></div>");
+            if (Array.isArray(res.data) && res.data.length > 0) {
+                renderStep(1, res.stepTitle, res.data, "subcategory", context);
+            } else {
+                $("#modalBodyContent").append("<div><p>No subcategories available.</p></div>");
+            }
+        },
+        error: function (xhr) {
+            $("#modalBodyContent").html("<p class='text-danger'>Error loading data.</p>");
+            console.error(xhr.responseText);
         }
-    }).fail(function (xhr) {
-        $("#modalBodyContent").html("<p class='text-danger'>Error loading data.</p>");
-        console.error(xhr.responseText);
     });
 });
 

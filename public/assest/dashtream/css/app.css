@@ -5273,3 +5273,17 @@ input[type="checkbox"]:checked+.slider::before {
   font-weight: 450;
   line-height: 20px;
 }
+.metismenu ul {
+    background: #1e293b; /* sidebar bg adjust */
+    padding-left: 15px;
+}
+.metismenu a {
+    font-size: 14px;
+    padding: 8px 15px;
+    display: block;
+    color: #fff;
+}
+.metismenu a:hover {
+    background: #334155;
+    color: #fff;
+}

@@ -131,7 +131,7 @@ class TreeController extends Controller
             $steps[] = [
                 "step" => count($steps) + 1,
                 "title" => "Subcategory",
-                "endpoint" => "/treeinstallation-subcategories/ID"
+                "endpoint" => "treeinstallation-subcategories/ID"
             ];
         }
 

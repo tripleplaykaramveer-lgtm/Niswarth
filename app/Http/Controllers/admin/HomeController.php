@@ -17,6 +17,7 @@ class HomeController extends Controller
     {
 
         $educations = Education::orderBy('sort_order', 'asc')->take(6)->get();
+        
         $medicines = Medicine::where('status', '1')
             ->orderBy('short_order', 'asc')
             ->take(5)
@@ -30,9 +31,11 @@ class HomeController extends Controller
         $clothes = Cloth::orderBy('short_order', 'asc')
             ->take(6)
             ->get();
+
         $treeInstallations = TreeInstallation::orderBy('short_order', 'asc')
             ->take(6)
             ->get();
+
         $spirituals = Spiritual::orderBy('short_order', 'asc')
             ->take(6)
             ->get();

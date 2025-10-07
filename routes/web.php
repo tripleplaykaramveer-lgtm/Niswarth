@@ -8,6 +8,7 @@ use App\Http\Controllers\admin\Education\EducationController;
 use App\Http\Controllers\admin\Education\EducationSubcategoryController;
 use App\Http\Controllers\admin\Education\EducationChaildernCategoryController;
 use App\Http\Controllers\admin\Education\EducationMiniChaildernCategoryController;
+use App\Http\Controllers\admin\Education\SubcategoryController;
 use App\Http\Controllers\admin\Medicine\MedicineController;
 use App\Http\Controllers\admin\Medicine\MedicineSubcategoryController;
 use App\Http\Controllers\admin\Medicine\MedicineChaildernCategoryController;
@@ -22,6 +23,8 @@ use App\Http\Controllers\admin\Treeinstallation\TreeChaildernCategoryController;
 use App\Http\Controllers\admin\Treeinstallation\TreeMiniChaildernCategoryController;
 use App\Http\Controllers\admin\FoodWaterController;
 use App\Http\Controllers\admin\HomeController;
+use App\Http\Controllers\FoodAndWater\ChildrenController;
+use App\Http\Controllers\FoodAndWater\MinichildController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\auth\RegisterController;
 use App\Http\Controllers\admin\loginController;
@@ -79,6 +82,27 @@ Route::middleware(['admin'])->namespace('admin')->prefix('admin')->group(functio
     Route::get('clothes/{clothes}/edit', [ClothesController::class, 'edit'])->name('clothes.edit');
     Route::put('clothes/{clothes}', [ClothesController::class, 'update'])->name('clothes.update');
     Route::delete('clothes/{clothes}', [ClothesController::class, 'destroy'])->name('clothes.destroy');
+
+    Route::get('/foodwater-subcategories', [\App\Http\Controllers\FoodAndWater\SubcategoryController::class, 'index'])->name('foodwater.subcategories');
+    Route::get('/foodwater-subcategories/add', [\App\Http\Controllers\FoodAndWater\SubcategoryController::class, 'create'])->name('foodwater.create');
+    Route::post('/foodwater-subcategories', [\App\Http\Controllers\FoodAndWater\SubcategoryController::class, 'store'])->name('foodwater.store');
+    Route::get('/foodwater-subcategories/{subcategory}/edit', [\App\Http\Controllers\FoodAndWater\SubcategoryController::class, 'edit'])->name('foodwater.edit');
+    Route::put('/foodwater-subcategories/{subcategory}', [\App\Http\Controllers\FoodAndWater\SubcategoryController::class, 'update'])->name('foodwater.update');
+    Route::delete('/foodwater-subcategories/{subcategory}', [\App\Http\Controllers\FoodAndWater\SubcategoryController::class, 'destroy'])->name('foodwater.destroy');
+
+    Route::get('/foodwater-children', [ChildrenController::class, 'index'])->name('foodwater.children');
+    Route::get('/foodwater-children/add', [ChildrenController::class, 'add'])->name('foodwater.children.add');
+    Route::post('/foodwater-children', [ChildrenController::class, 'store'])->name('foodwater.children.store');
+    Route::get('/foodwater-children/{id}/edit', [ChildrenController::class, 'edit'])->name('foodwater.children.edit');
+    Route::put('/foodwater-children/{id}', [ChildrenController::class, 'update'])->name('foodwater.children.update');
+    Route::delete('/foodwater-children/{id}', [ChildrenController::class, 'destroy'])->name('foodwater.children.destroy');
+
+    Route::get('/foodwater-minichildren', [MinichildController::class, 'index'])->name('foodwater.minichildren');
+    Route::get('/foodwater-minichildren/add', [MinichildController::class, 'add'])->name('foodwater.minichildren.add');
+    Route::post('/foodwater-minichildren', [MinichildController::class, 'store'])->name('foodwater.minichildren.store');
+    Route::get('/foodwater-minichildren/{id}/edit', [MinichildController::class, 'edit'])->name('foodwater.minichildren.edit');
+    Route::put('/foodwater-minichildren/{id}', [MinichildController::class, 'update'])->name('foodwater.minichildren.update');
+    Route::delete('/foodwater-minichildren/{id}', [MinichildController::class, 'destroy'])->name('foodwater.minichildren.destroy');
 
     Route::get('/tree-installation', [TreeController::class, 'index'])->name('tree-installation.index');
     Route::get('/tree-installation/create', [TreeController::class, 'create'])->name('tree-installation.create');
@@ -206,6 +230,11 @@ Route::get('/education-subcategories/{educationId}', [EducationController::class
 Route::get('/education-children/{subcategoryId}', [EducationController::class, 'getChildren']);
 Route::get('/education-minichildren/{childId}', [EducationController::class, 'getMiniChildren']);
 
+Route::get('/foodwater-subcategories/{educationId}', [\App\Http\Controllers\FoodAndWater\SubcategoryController::class, 'getSubcategories']);
+Route::get('/foodWaters-children/{subcategoryId}', [EducationController::class, 'getChildren']);
+
+
+
 Route::get('/medicine-flow/{medicineId}', [MedicineController::class, 'getStepFlow']);
 Route::get('/medicine-subcategories/{medicineId}', [MedicineController::class, 'getSubcategories']);
 Route::get('/medicine-children/{subcategoryId}', [MedicineController::class, 'getChildren']);
@@ -217,7 +246,7 @@ Route::get('/spiritual-children/{subcategoryId}', [spiritualController::class, '
 Route::get('/spiritual-minichildren/{childId}', [spiritualController::class, 'getMiniChildren']);
 
 Route::get('/treeinstallation-flow/{treeinstallationId}', [TreeController::class, 'getStepFlow']);
-Route::get('/treeinstallation-subcategories/{treeinstallationId}', [TreeController::class, 'getSubcategories']);
+Route::get('/tree-subcategories/{treeinstallationId}', [TreeController::class, 'getSubcategories']);
 Route::get('/treeinstallation-children/{subcategoryId}', [TreeController::class, 'getChildren']);
 Route::get('/treeinstallation-minichildren/{childId}', [TreeController::class, 'getMiniChildren']);
 
@@ -226,6 +255,11 @@ Route::get('/clothes-subcategories/{clothesId}', [ClothesController::class, 'get
 Route::get('/clothes-children/{subcategoryId}', [ClothesController::class, 'getChildren']);
 Route::get('/clothes-minichildren/{childId}', [ClothesController::class, 'getMiniChildren']);
 
+
+Route::get('/medicine-flow/{medicineId}', [MedicineController::class, 'getStepFlow']);
+Route::get('/medicine-subcategories/{medicineId}', [MedicineController::class, 'getSubcategories']);
+Route::get('/foodWaters-subcategories/{subcategoryId}', [FoodWaterController::class, 'getSubcategories']);
+Route::get('/medicine-minichildren/{childId}', [MedicineController::class, 'getMiniChildren']);
 Route::middleware(['vendor'])->namespace('admin')->prefix('vendor')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
