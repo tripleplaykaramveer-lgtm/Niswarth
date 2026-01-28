@@ -1,10 +1,16 @@
 @extends('frontend.layout.index')
 @section('main_contant')
+<style>
+    .item {
+    max-width: 161px !important;
+    max-height: 142px !important;
+}
+</style>
     <div id="imageSlider" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000" data-bs-touch="true">
         <div class="carousel-inner mb-3">
 
             <!-- Slide 1 -->
-            <div class="carousel-item active">
+            {{-- <div class="carousel-item active">
                 <img src="{{ asset('assest/dashtream/website/img/ngohome2.jpg') }}" class="img-fluid" width="650"
                     alt="" alt="Donation of school supplies" />
 
@@ -18,10 +24,10 @@
                         </a>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             <!-- Slide 2 -->
-            <div class="carousel-item">
+            {{-- <div class="carousel-item">
                 <img src="{{ asset('assest/dashtream/website/img/ngohome1.jpg') }}" alt="People donating">
                 <div class="card-home-overlay align-right">
                     <div class="carousel-card">
@@ -32,10 +38,10 @@
                             data-bs-target="#loginModal">Contribute Now</a>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             <!-- Slide 3 -->
-            <div class="carousel-item">
+            {{-- <div class="carousel-item">
                 <img src="{{ asset('assest/dashtream/website/img/ngohome3.jpg') }}" alt="Community impact">
                 <div class="card-home-overlay align-left">
                     <div class="carousel-card">
@@ -45,7 +51,7 @@
                             data-bs-target="#loginModal">Start Donating</a>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
         </div>
 
@@ -57,48 +63,6 @@
             <button type="button" data-bs-target="#imageSlider" data-bs-slide-to="2"></button>
         </div>
     </div>
-
-
-    <section class="ngo-showcase py-5">
-        <div class="container">
-            <h1 class="section-heading-ngo text-center mb-5">Join Us in Making a Difference</h1>
-
-            <div class="row g-4 justify-content-center align-items-stretch">
-                <!-- Card 1 -->
-                <div class="col-md-4 col-sm-6 col-12">
-                    <div class="illustration-item border text-center p-3 shadow-sm rounded bg-white">
-                        <div class="illustration-box">
-                            <img src="{{ asset('assest/dashtream/website/img/illustration2.png') }}"
-                                alt="Education Initiative" class="illustration-img">
-                        </div>
-                        <h4 class="illustration-title mt-3">Educate a Child,Build a Future</h4>
-                    </div>
-                </div>
-
-                <!-- Card 2 -->
-                <div class="col-md-4 col-sm-6 col-12">
-                    <div class="illustration-item  border text-center p-3 shadow-sm rounded bg-white">
-                        <div class="illustration-box">
-                            <img src="{{ asset('assest/dashtream/website/img/illustration1.png') }}"
-                                alt="Healthcare Program" class="illustration-img">
-                        </div>
-                        <h4 class="illustration-title mt-3">Your Support,Saves Lives</h4>
-                    </div>
-                </div>
-
-                <!-- Card 3 -->
-                <div class="col-md-4 col-sm-6 col-12">
-                    <div class="illustration-item border text-center p-3 shadow-sm rounded bg-white">
-                        <div class="illustration-box">
-                            <img src="{{ asset('assest/dashtream/website/img/illustration2.png') }}"
-                                alt="Community Development" class="illustration-img">
-                        </div>
-                        <h4 class="illustration-title mt-3">Together, We Can Create Change</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
 
     <section id="education-section" class="game-section">
@@ -124,7 +88,7 @@
                                             data-id="{{ $education->id }}" data-context="education" data-bs-toggle="modal"
                                             data-bs-target="#detailModal">
                                             {{ $education->button_text ?? 'Donate Now' }}
-                                        </  button>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -177,7 +141,6 @@
                 <button class="gradient-button" onclick="window.location.href='{{ route('foodwater.list') }}'">
                     View All
                 </button>
-
             </div>
             <div class="owl-carousel custom-carousel owl-theme owl-loaded owl-drag">
                 <div class="owl-stage-outer">
@@ -205,9 +168,8 @@
                 <div class="owl-nav disabled"><button type="button" role="presentation" class="owl-prev"><span
                             aria-label="Previous">‹</span></button><button type="button" role="presentation"
                         class="owl-next"><span aria-label="Next">›</span></button></div>
-                <div class="owl-dots disabled"><button role="button"
-                        class="owl-dot active"><span></span></button><button role="button"
-                        class="owl-dot"><span></span></button></div>
+                <div class="owl-dots disabled"><button role="button" class="owl-dot active"><span></span></button><button
+                        role="button" class="owl-dot"><span></span></button></div>
             </div>
         </div>
     </section>
@@ -258,7 +220,6 @@
                 <button class="gradient-button" onclick="window.location.href='{{ route('treeinstallation.list') }}'">
                     View All
                 </button>
-
             </div>
             <div class="owl-carousel custom-carousel owl-theme owl-loaded owl-drag">
                 <div class="owl-stage-outer">
@@ -299,11 +260,9 @@
                 <button class="gradient-button" onclick="window.location.href='{{ route('spiritual.list') }}'">
                     View All
                 </button>
-
             </div>
 
             <div class="owl-carousel custom-carousel owl-theme owl-loaded owl-drag">
-
                 <div class="owl-stage-outer">
                     <div class="owl-stage"
                         style="transform: translate3d(-864px, 0px, 0px); transition: all; width: 3456px;">

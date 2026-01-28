@@ -55,7 +55,7 @@ class ClothesSubcategoryController extends Controller
         });
 
         return redirect()
-            ->route('clothessubcotegory.index')
+            ->route('clothessubcategory.index')
             ->with('success', 'Saved successfully!');
 
     } catch (\Throwable $e) {

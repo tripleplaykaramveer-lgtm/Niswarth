@@ -17,14 +17,14 @@ class isAdmin
     {
         // dd(auth()->user());
         if (!auth()->check()) {
-            return redirect()->route('login')->with('error', "Please login first");
+            return redirect()->route('app.login')->with('error', "Please login first");
         }
 
         if (auth()->user()->role == 1) {
             
             return $next($request);
         } else {
-            return redirect()->route('register')->with('error', "You dont have access to that section");
+            return redirect()->route('app.register')->with('error', "You dont have access to that section");
         }
       
     }

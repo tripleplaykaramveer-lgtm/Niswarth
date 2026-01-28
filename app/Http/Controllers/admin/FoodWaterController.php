@@ -9,7 +9,7 @@ use App\Models\FoodWater;
 use App\Models\FoodwaterSubcategory;
 use App\Helper\Helper; // make sure you import your helper
 use App\Models\Medicine;
-use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +26,7 @@ class FoodWaterController extends Controller
         return response()->json($data);
     }
 
-  public function getSubcategories($educationId)
+    public function getSubcategories($educationId)
     {
         $subcategories = FoodwaterSubcategory::where('food_water_id', $educationId)
             ->where('status', '1')->orderBy('short_order', 'asc')
@@ -39,7 +39,7 @@ class FoodWaterController extends Controller
     }
     public function index()
     {
-        $educations = FoodWater::latest()->paginate(10); // Add pagination if needed
+        $educations = FoodWater::latest()->paginate(10); 
         return view('admin.foodwater.index', compact('educations'));
     }
 
@@ -72,36 +72,44 @@ class FoodWaterController extends Controller
 
     return redirect()->route('food-water.index')->with('success', 'Food & Water created successfully.');
 }
+    // ================= EDIT =================
     public function edit(FoodWater $foodWater)
     {
+        // Route Model Binding already handle kar raha hai
         return view('admin.foodwater.edit', compact('foodWater'));
     }
 
+    // ================= UPDATE =================
     public function update(Request $request, FoodWater $foodWater)
     {
-        $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'button_text' => 'nullable',
+        $validated = $request->validate([
+            'title'       => 'required|string|max:255',
+            'description' => 'required|string',
+            'button_text' => 'nullable|string|max:255',
             'short_order' => 'nullable|integer',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        // Handle image upload
+        // ✅ Image Upload
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('foodwater', 'public');
-            $foodWater->image = $path;
+
+            // Old image delete
+            if ($foodWater->image) {
+                Helper::deleteFile($foodWater->image);
+            }
+
+            // New image save
+            $validated['image'] = Helper::saveFile(
+                $request->file('image'),
+                'food-water'
+            );
         }
 
-        $foodWater->update([
-            'title' => $request->title,
-            'description' => $request->description,
-            'button_text' => $request->button_text,
-            'short_order' => $request->short_order,
-            'image' => $foodWater->image,
-        ]);
+        // Update record
+        $foodWater->update($validated);
 
-        return redirect()->route('food-water.index')
+        return redirect()
+            ->route('food-water.index')
             ->with('success', 'Food & Water updated successfully.');
     }
 

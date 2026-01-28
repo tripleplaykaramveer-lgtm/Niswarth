@@ -16,7 +16,8 @@ class HomeController extends Controller
     public function index()
     {
 
-        $educations = Education::orderBy('sort_order', 'asc')->take(6)->get();
+
+        $educations = Education::orderBy('sort_order', 'asc')->get();
         
         $medicines = Medicine::where('status', '1')
             ->orderBy('short_order', 'asc')

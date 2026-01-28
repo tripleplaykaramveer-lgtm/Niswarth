@@ -15,6 +15,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Twilio\Rest\Client;
+use Illuminate\Support\Facades\Http;
 
 class Helper
 {
@@ -37,7 +38,22 @@ class Helper
             // return false;
         }
     }
+function sendWhatsappOtp($phone, $otp)
+{
+    $response = Http::withHeaders([
+        'authToken' => env('MESSAGECENTRAL_AUTH_KEY'),
+        'Content-Type' => 'application/json'
+    ])->post(env('MESSAGECENTRAL_BASE_URL') . '/verification/v3/send', [
+        "customerId" => "YOUR_CUSTOMER_ID",
+        "to" => "91".$phone,
+        "type" => "OTP",
+        "sender" => env('MESSAGECENTRAL_SENDER'),
+        "message" => "Your verification OTP is {{$otp}}",
+        "channel" => "whatsapp"
+    ]);
 
+    return $response->successful();
+}
 
     public static function deleteFile($filename = '')
     {

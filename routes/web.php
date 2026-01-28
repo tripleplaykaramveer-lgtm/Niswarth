@@ -8,7 +8,7 @@ use App\Http\Controllers\admin\Education\EducationController;
 use App\Http\Controllers\admin\Education\EducationSubcategoryController;
 use App\Http\Controllers\admin\Education\EducationChaildernCategoryController;
 use App\Http\Controllers\admin\Education\EducationMiniChaildernCategoryController;
-use App\Http\Controllers\admin\Education\SubcategoryController;
+use App\Http\Controllers\AppUser\DashboardController As UserDashboard;
 use App\Http\Controllers\admin\Medicine\MedicineController;
 use App\Http\Controllers\admin\Medicine\MedicineSubcategoryController;
 use App\Http\Controllers\admin\Medicine\MedicineChaildernCategoryController;
@@ -26,15 +26,27 @@ use App\Http\Controllers\admin\HomeController;
 use App\Http\Controllers\FoodAndWater\ChildrenController;
 use App\Http\Controllers\FoodAndWater\MinichildController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\auth\RegisterController;
+use App\Http\Controllers\Frontend\RegisterController;
 use App\Http\Controllers\admin\loginController;
 use App\Http\Controllers\admin\DashboardController;
 
 
 
 Route::get('/register', [RegisterController::class, 'register_show'])->name('register');
+Route::get('/user-donate', [\App\Http\Controllers\Frontend\HomeController::class, 'index'])->name('user.donate');
 Route::get('/app-register', [\App\Http\Controllers\Frontend\RegisterController::class, 'register'])->name('app.register');
 Route::get('/app-login', [\App\Http\Controllers\Frontend\RegisterController::class, 'login'])->name('app.login');
+Route::post('/app-logout', [RegisterController::class, 'logout'])
+    ->name('app.logout');
+Route::middleware('auth:appuser')->group(function () {
+
+    Route::get('/user-donate/{item_id}', [\App\Http\Controllers\Frontend\HomeController::class, 'create'])
+        ->name('user.donate.form');
+
+    Route::post('/user-donate/store', [\App\Http\Controllers\Frontend\HomeController::class, 'store'])
+        ->name('user.donate.store');
+
+});
 Route::post('app-register', [\App\Http\Controllers\Frontend\RegisterController::class, 'store'])->name('frontend.register.store');
 Route::post('/user-register', [RegisterController::class, 'createuser'])->name('user.register');
 Route::get('/admin/login', [loginController::class, 'login_show'])->name('login');
@@ -66,14 +78,13 @@ Route::middleware(['admin'])->namespace('admin')->prefix('admin')->group(functio
     Route::put('medicine/{medicine}', [MedicineController::class, 'update'])->name('medicine.update');
     Route::delete('medicine/{medicine}', [MedicineController::class, 'destroy'])->name('medicine.destroy');
     // Update request
-    Route::put('/foodwater/{foodWater}', [FoodWaterController::class, 'update'])
-        ->name('foodwater.update');
+
     Route::get('/food-water', [FoodWaterController::class, 'index'])->name('food-water.index');
     Route::get('/food-water/create', [FoodWaterController::class, 'create'])->name('food-water.create');
     Route::post('/food-water', [FoodWaterController::class, 'store'])->name('food-water.store');
     Route::get('admin/foodwater/{foodWater}/edit', [FoodWaterController::class, 'edit'])
         ->name('food-water.edit');
-    Route::put('food-water/{education}', [FoodWaterController::class, 'update'])->name('food-water.update');
+    Route::put('food-water/{foodWater}', [FoodWaterController::class, 'update'])->name('food-water.update');
     Route::delete('food-water/{education}', [FoodWaterController::class, 'destroy'])->name('food-water.destroy');
 
     Route::get('/clothes', [ClothesController::class, 'index'])->name('clothes.index');
@@ -114,10 +125,11 @@ Route::middleware(['admin'])->namespace('admin')->prefix('admin')->group(functio
     Route::get('/spiritual', [spiritualController::class, 'index'])->name('spiritual.index');
     Route::get('/spiritual/create', [spiritualController::class, 'create'])->name('spiritual.create');
     Route::post('/spiritual', [spiritualController::class, 'store'])->name(name: 'spiritual.store');
-    Route::get('spiritual/{spiritual}/edit', [spiritualController::class, 'edit'])->name('spiritual.edit');
-    Route::put('spiritual/{spiritual}', [spiritualController::class, 'update'])->name('spiritual.update');
-    Route::delete('spiritual/{spiritual}', [spiritualController::class, 'destroy'])->name('spiritual.destroy');
+    Route::get('spiritual/{spiritual}/edit', [SpiritualController::class, 'edit'])
+    ->name('spiritual.edit');
 
+    Route::put('spiritual/{spiritual}', [SpiritualController::class, 'update'])->name('spiritual.update');
+    Route::delete('spiritual/{spiritual}', [spiritualController::class, 'destroy'])->name('spiritual.destroy');
     Route::get('/education-subcategory', [EducationSubcategoryController::class, 'index'])->name('educationsubcategory.index');
     Route::get('/education-subcategory/create', [EducationSubcategoryController::class, 'create'])->name('educationsubcategory.create');
     Route::post('/education-subcategory', [EducationSubcategoryController::class, 'store'])->name('educationsubcategory.store');
@@ -260,11 +272,18 @@ Route::get('/medicine-flow/{medicineId}', [MedicineController::class, 'getStepFl
 Route::get('/medicine-subcategories/{medicineId}', [MedicineController::class, 'getSubcategories']);
 Route::get('/foodWaters-subcategories/{subcategoryId}', [FoodWaterController::class, 'getSubcategories']);
 Route::get('/medicine-minichildren/{childId}', [MedicineController::class, 'getMiniChildren']);
-Route::middleware(['vendor'])->namespace('admin')->prefix('vendor')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+Route::middleware(['auth:appuser'])->group(function () {
+
+    Route::get('/user/dashboard', [UserDashboard::class, 'index'])
+        ->name('appuser.dashboard');
 
 });
+Route::get('email-otp/{id}', [RegisterController::class, 'showOtpForm'])
+    ->name('email.otp.form');
 
+Route::post('email-otp-verify', [RegisterController::class, 'verifyOtp'])
+    ->name('email.otp.verify');
 
 
 

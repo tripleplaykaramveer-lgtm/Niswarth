@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\admin\Spiritual;
 
 use App\Http\Controllers\Controller;
-use App\Models\Spiritual;
+use App\Models\Spiritual\Spiritual;
 use App\Models\Lead;
-use App\Models\User;
+use App\Helper\Helper;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -28,56 +28,58 @@ class spiritualController extends Controller
         return view('admin.spiritual.create');
     }
 
-    public function store(Request $request)
+    
+        public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'image' => 'required',
+        $validated = $request->validate([
+          'image' => 'required',
             'title' => 'required',
             'description' => 'required',
             'button_text' => 'nullable',
             'short_order' => 'required|integer',
         ]);
 
-        $path = $request->file('image')->store('spiritual', 'public');
-
-        Spiritual::create([
-            'image' => $path,
-            'title' => $request->title,
-            'description' => $request->description,
-            'button_text' => $request->button_text,
-            'short_order' => $request->short_order,
-        ]);
-
-        return redirect()->route('spiritual.index')->with('success', 'Spiritual created successfully.');
-    }
-    public function edit(Spiritual $education)
-    {
-        return view('admin.spiritual.edit', compact('education'));
-    }
-
-    public function update(Request $request, Spiritual $education)
-    {
-        $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'button_text' => 'nullable',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
-
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('spiritual', 'public');
-            $education->image = $path;
+        $data = [...$validated, 'image' => 'spiritual/image.png'];
+        if ($request->file('image')) {
+            $data['image'] = Helper::saveFile($request->file('image'), 'cms');
         }
 
-        $education->update([
-            'title' => $request->title,
-            'description' => $request->description,
-            'button_text' => $request->button_text,
-            'image' => $education->image,
-        ]);
-
-        return redirect()->route('spiritual.index')->with('success', 'Spiritual updated successfully.');
+        Spiritual::create($data);
+        return to_route('spiritual.index')->withSuccess('Spiritual Added Successfully..!!');
     }
+     public function edit(Spiritual $spiritual)
+    {
+        return view('admin.spiritual.edit', compact('spiritual'));
+    }
+
+    public function update(Request $request, Spiritual $spiritual)
+{
+    $validated = $request->validate([
+        'title'       => 'required|string|max:255',
+        'description' => 'required|string',
+        'button_text' => 'nullable|string|max:255',
+        'image'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+    ]);
+
+    if ($request->hasFile('image')) {
+
+        if ($spiritual->image) {
+            Helper::deleteFile($spiritual->image);
+        }
+
+        $validated['image'] = Helper::saveFile(
+            $request->file('image'),
+            'spiritual'
+        );
+    }
+
+    $spiritual->update($validated);
+
+    return redirect()
+        ->route('spiritual.index')
+        ->with('success', 'Spiritual updated successfully.');
+}
+
 
 public function destroy(Spiritual $education)
     {

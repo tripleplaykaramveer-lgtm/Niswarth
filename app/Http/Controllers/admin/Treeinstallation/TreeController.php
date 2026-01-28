@@ -7,14 +7,14 @@ use Illuminate\Http\Request;
 use App\Models\Treeinstallation\TreeinstallationSubcategory;
 use App\Models\Treeinstallation\TreeinstallationChaildernCategory;
 use App\Models\Treeinstallation\TreeinstallationMiniChaildernCategory;
-use App\Models\Treeinstallation\Treeinstallation;
+use App\Models\Treeinstallation\TreeInstallation;
 use App\Helper\Helper;
 
 class TreeController extends Controller
 {
     public function index()
     {
-        $treeinstallations = Treeinstallation::latest()->paginate(10);
+        $treeinstallations = TreeInstallation::latest()->paginate(10);
         return view('admin.treeinstallation.index', compact('treeinstallations'));
     }
 
@@ -61,7 +61,7 @@ class TreeController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'button_text' => $request->button_text,
-            'short_order' => $request->button_text,
+            'short_order' => $request->short_order,
         ];
 
         if ($request->file('image')) {

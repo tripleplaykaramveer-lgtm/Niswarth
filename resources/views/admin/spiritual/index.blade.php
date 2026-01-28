@@ -37,7 +37,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($spirituals as $spiritual)
+                            @forelse($educations as $spiritual)
                                 <tr>
                                     <td>
                                         @if ($spiritual->image)
@@ -77,7 +77,7 @@
 
                 {{-- Pagination --}}
                 <div class="mt-3 d-flex justify-content-center">
-                    {{ $spirituals->links() }}
+                    {{ $educations->links() }}
                 </div>
 
             </div>

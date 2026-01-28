@@ -3,34 +3,41 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Clothes;
-use App\Models\Education;
-use App\Models\FoodWater;
-use App\Models\Medicine;
-use App\Models\Spiritual;
-use App\Models\TreeInstallation;
 use Illuminate\Http\Request;
+use App\Models\UserDonate;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
-    // public function index()
-    // {
-       
-    //     $educations = Education::latest()->take(5)->get();
-        
-    //     $medicines = Medicine::latest()->take(5)->get();
-    //     $foodWaters = FoodWater::latest()->take(5)->get();
-    //     $clothes = Clothes::latest()->take(5)->get();
-    //     $treeInstallations = TreeInstallation::latest()->take(5)->get();
-    //     $spirituals = Spiritual::latest()->take(5)->get();
+    public function create($item_id)
+    {
+        return view('frontend.pages.userdonate', compact('item_id'));
+    }
 
-    //     return view('frontend.pages.index', compact(
-    //         'educations',
-    //         'medicines',
-    //         'foodWaters',
-    //         'clothes',
-    //         'treeInstallations',
-    //         'spirituals'
-    //     ));
-    // }
+    public function store(Request $request)
+    {
+        $request->validate([
+            'item_id'   => 'required',
+            'full_name' => 'required',
+            'email'     => 'required',
+            'mobile'    => 'required',
+            'address'   => 'required',
+            'city'      => 'required',
+            'state'     => 'required',
+        ]);
+
+        UserDonate::create([
+            'app_user_id' => auth()->id(),
+            'item_id'     => $request->item_id,
+            'full_name'   => $request->full_name,
+            'email'       => $request->email,
+            'mobile'      => $request->mobile,
+            'address'     => $request->address,
+            'city'        => $request->city,
+            'state'       => $request->state,
+        ]);
+
+        return back()->with('success', 'Donation saved');
+    }
+
 }

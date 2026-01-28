@@ -72,6 +72,7 @@ $(document).on("click", ".next-step", function () {
     let step = parseInt($(this).data("step")) + 1;
     let context = $(this).data("context");
 
+    // Remove future steps
     $(`#${context}-step-${step}, #${context}-step-${step + 1}, #${context}-step-${step + 2}`).remove();
 
     if (type === "subcategory") {
@@ -79,7 +80,11 @@ $(document).on("click", ".next-step", function () {
             if (Array.isArray(data) && data.length > 0) {
                 renderStep(step, "Select Children Category", data, "child", context);
             } else {
-                $("#modalBodyContent").append(`<div id="${context}-step-${step}"><p>No children found.</p></div>`);
+                $("#modalBodyContent").append(`
+                    <div id="${context}-step-${step}">
+                        <p>No children found.</p>
+                    </div>
+                `);
             }
         });
     }
@@ -89,16 +94,54 @@ $(document).on("click", ".next-step", function () {
             if (Array.isArray(data) && data.length > 0) {
                 renderStep(step, "Select Mini Children Category", data, "mini", context);
             } else {
-                $("#modalBodyContent").append(`<div id="${context}-step-${step}"><p>No mini children found.</p></div>`);
+                $("#modalBodyContent").append(`
+                    <div id="${context}-step-${step}">
+                        <p>No mini children found.</p>
+                    </div>
+                `);
             }
         });
     }
 
     if (type === "mini") {
-        $("#modalBodyContent").append(`<div id="${context}-step-${step}"><p>✅ All steps completed. Proceed to donation.</p></div>`);
-    }
+
+    // Remove old success message
+    $("#modalBodyContent")
+        .find("p")
+        .filter(function () {
+            return $(this).text().includes("All steps completed");
+        })
+        .parent()
+        .remove();
+
+    // Donate button with item_id
+    $("#modalBodyContent").append(`
+        <div id="${context}-step-${step}" class="text-center mt-4">
+            <button type="button"
+                class="btn btn-primary px-5 py-2 donate-btn"
+                data-item-id="${id}">
+                Donate Now
+            </button>
+        </div>
+    `);
+}
+
+
 });
 
+$(document).on("click", ".donate-btn", function () {
+
+    // ✅ Correctly get item_id
+    let itemId = $(this).data("item-id");
+
+    if (!itemId) {
+        console.error("Item ID not found");
+        return;
+    }
+
+    // ✅ Redirect to Laravel route
+    window.location.href = "/user-donate/" + itemId;
+});
 
 $(document).on("click", ".custom-select-btn", function () {
     let step = $(this).data("step");

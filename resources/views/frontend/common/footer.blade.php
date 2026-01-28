@@ -1,4 +1,4 @@
-  <footer class="bg-gray-600  pb-4 "style="background-color: #f1f5f9;">
+   <footer class="bg-gray-600  pb-4 "style="background-color: #f1f5f9;">
       <div class="container ">
           <div class="row g-4 p-3">
 
@@ -66,7 +66,7 @@
       </div>
   </footer>
 
-  <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+  <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true" data-type="mini">
       <div class="modal-dialog modal-dialog-centered modal-xl">
           <div class="modal-content custom-stepper-modal">
               <div class="modal-body d-flex p-0">
@@ -81,10 +81,17 @@
                   <div class="modal-stepper-right p-4 flex-grow-1">
                       <button type="button" class="btn-close float-end" data-bs-dismiss="modal"
                           aria-label="Close"></button>
-                      <h5 class="mb-4" id="detailModalLabel">Donate</h5>
+                      <h5 class="mb-4 donate-item" id="detailModalLabel">Donate</h5>
                       <div id="modalBodyContent"></div>
                   </div>
               </div>
           </div>
       </div>
   </div>
+<script>
+    document.querySelectorAll('.donate-item').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.getElementById('item_id').value = this.dataset.id;
+        });
+    });
+</script>

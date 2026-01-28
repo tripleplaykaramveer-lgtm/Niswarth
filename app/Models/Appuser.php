@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 
-class Appuser extends Model
+class Appuser extends Authenticatable
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Notifiable;
 
     protected $table = 'appusers';
 
@@ -22,6 +23,8 @@ class Appuser extends Model
         'donation_type',
         'contact_method',
         'role',
+        'email_otp',
+        'email_verified_at'
     ];
 
     protected $hidden = [
